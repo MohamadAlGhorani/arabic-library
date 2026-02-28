@@ -1,3 +1,10 @@
+# Uploads
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Build output
+client/dist/
+
 # Logs
 logs
 *.log

@@ -1,0 +1,52 @@
+import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { HiOutlineHome, HiOutlineShieldCheck, HiOutlineArrowRightOnRectangle, HiOutlineArrowLeftOnRectangle } from 'react-icons/hi2';
+import LanguageSwitcher from './LanguageSwitcher';
+
+export default function Navbar() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
+
+  return (
+    <nav className="bg-emerald-700 text-white shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-2">
+        <Link to="/" className="text-xl font-bold hover:text-emerald-200 transition-colors">
+          {t('app.title')}
+        </Link>
+        <div className="flex items-center gap-3 flex-wrap">
+          <LanguageSwitcher />
+          <Link to="/" className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors">
+            <HiOutlineHome className="w-5 h-5" />
+            {t('nav.home')}
+          </Link>
+          {token ? (
+            <>
+              <Link to="/admin" className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors">
+                <HiOutlineShieldCheck className="w-5 h-5" />
+                {t('nav.dashboard')}
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors"
+              >
+                <HiOutlineArrowLeftOnRectangle className="w-5 h-5" />
+                {t('nav.logout')}
+              </button>
+            </>
+          ) : (
+            <Link to="/admin/login" className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors">
+              <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
+              {t('nav.admin')}
+            </Link>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+}
