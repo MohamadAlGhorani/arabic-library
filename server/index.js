@@ -28,6 +28,7 @@ app.use('/api/stats', require('./routes/stats'));
 app.use('/api/settings', require('./routes/settings'));
 app.use('/api/locations', require('./routes/locations'));
 app.use('/api/admins', require('./routes/admins'));
+app.use('/api/pages', require('./routes/pages'));
 
 // Serve frontend in production
 const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');

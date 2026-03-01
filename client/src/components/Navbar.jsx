@@ -6,6 +6,8 @@ import {
   HiOutlineShieldCheck,
   HiOutlineArrowRightOnRectangle,
   HiOutlineArrowLeftOnRectangle,
+  HiOutlineInformationCircle,
+  HiOutlineQuestionMarkCircle,
   HiOutlineBars3,
   HiOutlineXMark,
 } from 'react-icons/hi2';
@@ -55,6 +57,14 @@ export default function Navbar() {
       <Link to="/" className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors">
         <HiOutlineHome className="w-5 h-5" />
         {t('nav.home')}
+      </Link>
+      <Link to="/about" className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors">
+        <HiOutlineInformationCircle className="w-5 h-5" />
+        {t('nav.about')}
+      </Link>
+      <Link to="/how-it-works" className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors">
+        <HiOutlineQuestionMarkCircle className="w-5 h-5" />
+        {t('nav.howItWorks')}
       </Link>
       {admin ? (
         <>

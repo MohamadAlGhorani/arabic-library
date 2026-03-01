@@ -52,6 +52,88 @@ select {
   overflow: hidden;
 }
 
+/* Prose styles for rich text content */
+.prose h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 1.5rem 0 0.75rem;
+  color: #1f2937;
+}
+.prose h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1.25rem 0 0.5rem;
+  color: #374151;
+}
+.prose h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1rem 0 0.5rem;
+  color: #374151;
+}
+.prose p {
+  margin: 0.75rem 0;
+  line-height: 1.75;
+  color: #4b5563;
+}
+.prose ul,
+.prose ol {
+  margin: 0.75rem 0;
+  padding-inline-start: 1.5rem;
+}
+.prose ul {
+  list-style-type: disc;
+}
+.prose ol {
+  list-style-type: decimal;
+}
+.prose li {
+  margin: 0.25rem 0;
+  line-height: 1.75;
+  color: #4b5563;
+}
+.prose a {
+  color: #059669;
+  text-decoration: underline;
+}
+.prose a:hover {
+  color: #047857;
+}
+.prose strong {
+  font-weight: 600;
+  color: #1f2937;
+}
+.prose em {
+  font-style: italic;
+}
+.prose blockquote {
+  border-inline-start: 4px solid #059669;
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  background-color: #f0fdf4;
+  color: #374151;
+  border-radius: 0 0.375rem 0.375rem 0;
+}
+.prose img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+}
+
+/* Quill editor overrides */
+.quill-wrapper .ql-container {
+  min-height: 300px;
+  font-size: 1rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+.quill-wrapper .ql-toolbar {
+  border-radius: 0.5rem 0.5rem 0 0;
+  background-color: #f9fafb;
+}
+.quill-wrapper .ql-editor {
+  min-height: 300px;
+  line-height: 1.75;
+}
+
 /* Modern calendar styles */
 .calendar-wrapper .rdp-root {
   --rdp-accent-color: #059669;

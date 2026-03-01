@@ -16,6 +16,9 @@ import ManageReservations from './pages/admin/ManageReservations';
 import ManageSettings from './pages/admin/ManageSettings';
 import ManageLocations from './pages/admin/ManageLocations';
 import ManageAdmins from './pages/admin/ManageAdmins';
+import ManagePages from './pages/admin/ManagePages';
+import About from './pages/About';
+import HowItWorks from './pages/HowItWorks';
 
 function ProtectedRoute() {
   const { t } = useTranslation();
@@ -89,6 +92,8 @@ export default function App() {
         <Routes>
           <Route element={<PublicLayout />}>
             <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/reserve/:id" element={<Reserve />} />
             <Route path="/admin/login" element={<Login />} />
           </Route>
@@ -101,6 +106,7 @@ export default function App() {
               <Route path="categories" element={<ManageCategories />} />
               <Route path="locations" element={<ManageLocations />} />
               <Route path="admins" element={<ManageAdmins />} />
+              <Route path="content" element={<ManagePages />} />
             </Route>
           </Route>
         </Routes>

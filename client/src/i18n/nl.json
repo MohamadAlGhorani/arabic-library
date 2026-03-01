@@ -16,7 +16,10 @@
     "locations": "Locaties",
     "admins": "Beheerders",
     "language": "Taal selecteren",
-    "menu": "Menu"
+    "menu": "Menu",
+    "about": "Over Ons",
+    "howItWorks": "Hoe Het Werkt",
+    "content": "Inhoud"
   },
   "books": {
     "title": "Boeken Bekijken",
@@ -172,6 +175,17 @@
     "addSlot": "Slot Toevoegen",
     "noSlots": "Geen tijdsloten ingesteld",
     "saved": "Instellingen opgeslagen!"
+  },
+  "pages": {
+    "manageContent": "Inhoud Beheren",
+    "editPage": "Pagina Bewerken",
+    "about": "Over Ons",
+    "howItWorks": "Hoe Het Werkt",
+    "title": "Paginatitel",
+    "content": "Pagina-inhoud",
+    "saved": "Pagina-inhoud bijgewerkt!",
+    "noContent": "Deze pagina is nog niet beschikbaar.",
+    "back": "Terug naar Pagina's"
   },
   "footer": {
     "text": "Arabische Jeugdbibliotheek",

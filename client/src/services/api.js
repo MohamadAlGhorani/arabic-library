@@ -69,4 +69,8 @@ export const updateAdmin = (id, data) => api.put(`/admins/${id}`, data);
 export const toggleAdmin = (id) => api.put(`/admins/${id}/toggle`);
 export const deleteAdmin = (id) => api.delete(`/admins/${id}`);
 
+// Pages (CMS)
+export const getPage = (slug) => api.get(`/pages/${slug}`);
+export const updatePage = (slug, data) => api.put(`/pages/${slug}`, data);
+
 export default api;

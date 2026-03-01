@@ -16,7 +16,10 @@
     "locations": "Locations",
     "admins": "Admin Users",
     "language": "Select language",
-    "menu": "Menu"
+    "menu": "Menu",
+    "about": "About",
+    "howItWorks": "How It Works",
+    "content": "Content"
   },
   "books": {
     "title": "Browse Books",
@@ -172,6 +175,17 @@
     "addSlot": "Add Slot",
     "noSlots": "No time slots configured",
     "saved": "Settings saved!"
+  },
+  "pages": {
+    "manageContent": "Manage Content",
+    "editPage": "Edit Page",
+    "about": "About Us",
+    "howItWorks": "How It Works",
+    "title": "Page Title",
+    "content": "Page Content",
+    "saved": "Page content updated!",
+    "noContent": "This page is not yet available.",
+    "back": "Back to Pages"
   },
   "footer": {
     "text": "Arabic Youth Library",

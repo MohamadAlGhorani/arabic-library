@@ -9,6 +9,7 @@ import {
   HiOutlineCog6Tooth,
   HiOutlineBuildingStorefront,
   HiOutlineUsers,
+  HiOutlineDocumentText,
   HiOutlineXMark,
 } from 'react-icons/hi2';
 
@@ -28,6 +29,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
       { to: '/admin/categories', label: t('nav.categories'), icon: HiOutlineTag },
       { to: '/admin/locations', label: t('nav.locations'), icon: HiOutlineBuildingStorefront },
       { to: '/admin/admins', label: t('nav.admins'), icon: HiOutlineUsers },
+      { to: '/admin/content', label: t('nav.content'), icon: HiOutlineDocumentText },
     );
   }
 

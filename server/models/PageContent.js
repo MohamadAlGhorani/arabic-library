@@ -1,78 +1,29 @@
-require('dotenv').config();
 const mongoose = require('mongoose');
-const Admin = require('./models/Admin');
-const Category = require('./models/Category');
-const Book = require('./models/Book');
-const Reservation = require('./models/Reservation');
-const Settings = require('./models/Settings');
-const Location = require('./models/Location');
-const PageContent = require('./models/PageContent');
 
-const seedDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log('Connected to MongoDB');
+const pageContentSchema = new mongoose.Schema({
+  slug: {
+    type: String,
+    enum: ['about', 'how-it-works'],
+    required: [true, 'Slug is required'],
+    unique: true,
+  },
+  title_en: { type: String, default: '' },
+  title_ar: { type: String, default: '' },
+  title_nl: { type: String, default: '' },
+  content_en: { type: String, default: '' },
+  content_ar: { type: String, default: '' },
+  content_nl: { type: String, default: '' },
+}, { timestamps: true });
 
-    // Clear existing data
-    await Admin.deleteMany({});
-    await Category.deleteMany({});
-    await Book.deleteMany({});
-    await Reservation.deleteMany({});
-    await Settings.deleteMany({});
-    await Location.deleteMany({});
-    await PageContent.deleteMany({});
-
-    // Create default location
-    const location = await Location.create({
-      name: 'Main Library',
-      address: '',
-      phone: '',
-      description: 'The main branch of Arabic Youth Library',
-    });
-    console.log('Default location created:', location.name);
-
-    // Create default settings for this location
-    await Settings.create({ location: location._id });
-    console.log('Default settings created for location');
-
-    // Create super admin
-    await Admin.create({
-      username: 'admin',
-      password: 'admin123',
-      role: 'super_admin',
-      location: null,
-    });
-    console.log('Super admin created: username=admin, password=admin123');
-
-    // Create categories
-    const categoryNames = ['Stories', 'Adventure', 'Educational', 'Islamic', 'Science', 'History'];
-    const categories = await Category.insertMany(
-      categoryNames.map((name) => ({ name }))
-    );
-    console.log(`Created ${categories.length} categories`);
-
-    // Create sample books
-    const sampleBooks = [
-      { title: 'حكايات من الشرق', description: 'مجموعة من القصص الشرقية الممتعة للشباب', category: categories[0]._id, status: 'available', location: location._id },
-      { title: 'مغامرات سندباد', description: 'رحلات سندباد البحري المثيرة عبر البحار', category: categories[1]._id, status: 'available', location: location._id },
-      { title: 'تعلم العربية', description: 'كتاب تعليمي لتحسين مهارات اللغة العربية', category: categories[2]._id, status: 'available', location: location._id },
-      { title: 'قصص الأنبياء', description: 'قصص الأنبياء للناشئة بأسلوب مبسط وممتع', category: categories[3]._id, status: 'available', location: location._id },
-      { title: 'عجائب الكون', description: 'اكتشف أسرار الفضاء والكواكب والنجوم', category: categories[4]._id, status: 'available', location: location._id },
-      { title: 'تاريخ الحضارة العربية', description: 'رحلة عبر تاريخ الحضارة العربية والإسلامية', category: categories[5]._id, status: 'available', location: location._id },
-      { title: 'ألف ليلة وليلة', description: 'أشهر القصص العربية الكلاسيكية', category: categories[0]._id, status: 'available', location: location._id },
-      { title: 'كنوز المعرفة', description: 'موسوعة علمية مبسطة للشباب', category: categories[4]._id, status: 'available', location: location._id },
-    ];
-
-    await Book.insertMany(sampleBooks);
-    console.log(`Created ${sampleBooks.length} sample books`);
-
-    // Seed About page
-    await PageContent.create({
-      slug: 'about',
-      title_en: 'About the Arabic Youth Library',
-      title_ar: 'عن مكتبة الشباب العربي',
-      title_nl: 'Over de Arabische Jeugdbibliotheek',
-      content_en: `<h2>Our Story</h2>
+/**
+ * Default content for auto-creation.
+ */
+const DEFAULT_CONTENT = {
+  'about': {
+    title_en: 'About the Arabic Youth Library',
+    title_ar: 'عن مكتبة الشباب العربي',
+    title_nl: 'Over de Arabische Jeugdbibliotheek',
+    content_en: `<h2>Our Story</h2>
 <p>The Arabic Youth Library was born from a simple yet powerful idea: every young person deserves access to the rich world of Arabic literature, no matter where they live. We believe that books have the power to connect generations, preserve culture, and ignite the imagination of young minds.</p>
 
 <h2>Our Mission</h2>
@@ -84,9 +35,9 @@ const seedDB = async () => {
 <li><strong>Classic Tales</strong> — Timeless stories from the rich Arabic literary tradition</li>
 <li><strong>Educational Books</strong> — Resources to help young learners master the Arabic language</li>
 <li><strong>Islamic Literature</strong> — Beautiful retellings of prophets' stories and Islamic heritage</li>
-<li><strong>Science & Discovery</strong> — Fascinating explorations of the natural world in Arabic</li>
-<li><strong>Adventure & Fiction</strong> — Exciting tales that spark the imagination</li>
-<li><strong>History & Culture</strong> — Journeys through the magnificent Arab civilization</li>
+<li><strong>Science &amp; Discovery</strong> — Fascinating explorations of the natural world in Arabic</li>
+<li><strong>Adventure &amp; Fiction</strong> — Exciting tales that spark the imagination</li>
+<li><strong>History &amp; Culture</strong> — Journeys through the magnificent Arab civilization</li>
 </ul>
 
 <h2>Our Community</h2>
@@ -96,7 +47,7 @@ const seedDB = async () => {
 
 <blockquote>Reading is the gateway to knowledge, and we are proud to hold that gate open for every young reader in our community.</blockquote>`,
 
-      content_ar: `<h2>قصتنا</h2>
+    content_ar: `<h2>قصتنا</h2>
 <p>وُلدت مكتبة الشباب العربي من فكرة بسيطة وقوية: كل شاب يستحق الوصول إلى عالم الأدب العربي الغني، بغض النظر عن مكان إقامته. نؤمن بأن الكتب لديها القدرة على ربط الأجيال، والحفاظ على الثقافة، وإشعال خيال العقول الشابة.</p>
 
 <h2>رسالتنا</h2>
@@ -120,7 +71,7 @@ const seedDB = async () => {
 
 <blockquote>القراءة هي بوابة المعرفة، ونحن فخورون بأن نبقي تلك البوابة مفتوحة لكل قارئ شاب في مجتمعنا.</blockquote>`,
 
-      content_nl: `<h2>Ons Verhaal</h2>
+    content_nl: `<h2>Ons Verhaal</h2>
 <p>De Arabische Jeugdbibliotheek is ontstaan uit een eenvoudig maar krachtig idee: elke jongere verdient toegang tot de rijke wereld van de Arabische literatuur, ongeacht waar ze wonen. Wij geloven dat boeken de kracht hebben om generaties te verbinden, cultuur te bewaren en de verbeelding van jonge geesten te prikkelen.</p>
 
 <h2>Onze Missie</h2>
@@ -132,9 +83,9 @@ const seedDB = async () => {
 <li><strong>Klassieke Verhalen</strong> — Tijdloze verhalen uit de rijke Arabische literaire traditie</li>
 <li><strong>Educatieve Boeken</strong> — Hulpmiddelen om jonge leerlingen te helpen de Arabische taal te beheersen</li>
 <li><strong>Islamitische Literatuur</strong> — Prachtige hervertellingen van profetenverhalen en islamitisch erfgoed</li>
-<li><strong>Wetenschap & Ontdekking</strong> — Fascinerende verkenningen van de natuurlijke wereld in het Arabisch</li>
-<li><strong>Avontuur & Fictie</strong> — Spannende verhalen die de verbeelding prikkelen</li>
-<li><strong>Geschiedenis & Cultuur</strong> — Reizen door de prachtige Arabische beschaving</li>
+<li><strong>Wetenschap &amp; Ontdekking</strong> — Fascinerende verkenningen van de natuurlijke wereld in het Arabisch</li>
+<li><strong>Avontuur &amp; Fictie</strong> — Spannende verhalen die de verbeelding prikkelen</li>
+<li><strong>Geschiedenis &amp; Cultuur</strong> — Reizen door de prachtige Arabische beschaving</li>
 </ul>
 
 <h2>Onze Gemeenschap</h2>
@@ -143,16 +94,13 @@ const seedDB = async () => {
 <p>Ons team van gepassioneerde vrijwilligers en medewerkers werkt onvermoeibaar om ervoor te zorgen dat elk bezoek aan de Arabische Jeugdbibliotheek een heerlijke ervaring is. Of u nu een ouder bent die op zoek is naar verhaaltjes voor het slapengaan, een leraar die educatieve bronnen zoekt, of een jonge lezer die graag nieuwe werelden verkent via Arabische boeken — u bent hier welkom.</p>
 
 <blockquote>Lezen is de toegangspoort tot kennis, en wij zijn er trots op die poort open te houden voor elke jonge lezer in onze gemeenschap.</blockquote>`,
-    });
-    console.log('About page content seeded');
+  },
 
-    // Seed How It Works page
-    await PageContent.create({
-      slug: 'how-it-works',
-      title_en: 'How It Works',
-      title_ar: 'كيف يعمل',
-      title_nl: 'Hoe Het Werkt',
-      content_en: `<h2>Your Reading Journey in 6 Simple Steps</h2>
+  'how-it-works': {
+    title_en: 'How It Works',
+    title_ar: 'كيف يعمل',
+    title_nl: 'Hoe Het Werkt',
+    content_en: `<h2>Your Reading Journey in 6 Simple Steps</h2>
 <p>Getting started with the Arabic Youth Library is easy and affordable. Here's how you can begin your journey into the wonderful world of Arabic books:</p>
 
 <h3>1. Browse Our Catalog</h3>
@@ -161,16 +109,16 @@ const seedDB = async () => {
 <h3>2. Reserve Your Book</h3>
 <p>Found a book you love? Simply click "Reserve" and choose a convenient pickup date and time slot. Fill in your details, and you'll receive a confirmation email with all the information you need. It's that simple!</p>
 
-<h3>3. Visit Your Location & Subscribe</h3>
+<h3>3. Visit Your Location &amp; Subscribe</h3>
 <p>Come to your chosen library branch at the scheduled time. On your <strong>first visit</strong>, you'll sign up for our monthly subscription — a small, affordable fee that gives you unlimited access to our entire collection. Our friendly staff will guide you through the quick registration process.</p>
 
 <h3>4. Collect Your Book</h3>
 <p>Pick up your reserved book and it's all yours to enjoy! We'll confirm the collection and set a return date that works for you. No rush — we want you to enjoy every page at your own pace.</p>
 
-<h3>5. Read & Enjoy</h3>
+<h3>5. Read &amp; Enjoy</h3>
 <p>Take your book home and dive into the wonderful world of Arabic literature. Whether it's a bedtime story, a weekend adventure, or an educational journey — savor every moment with your book.</p>
 
-<h3>6. Return & Borrow More</h3>
+<h3>6. Return &amp; Borrow More</h3>
 <p>When you've finished reading, simply return the book to any of our locations. And here's the best part — with your monthly subscription, you can borrow <strong>unlimited books</strong>! Return one and pick up another right away. There's no limit to how many books you can enjoy.</p>
 
 <h2>Why Subscribe?</h2>
@@ -185,7 +133,7 @@ const seedDB = async () => {
 
 <blockquote>Start your reading adventure today — browse our catalog and reserve your first book!</blockquote>`,
 
-      content_ar: `<h2>رحلتك في القراءة في 6 خطوات بسيطة</h2>
+    content_ar: `<h2>رحلتك في القراءة في 6 خطوات بسيطة</h2>
 <p>البدء مع مكتبة الشباب العربي سهل وبأسعار معقولة. إليك كيف يمكنك بدء رحلتك في عالم الكتب العربية الرائع:</p>
 
 <h3>1. تصفح كتالوجنا</h3>
@@ -218,7 +166,7 @@ const seedDB = async () => {
 
 <blockquote>ابدأ مغامرتك في القراءة اليوم — تصفح كتالوجنا واحجز كتابك الأول!</blockquote>`,
 
-      content_nl: `<h2>Uw Leesreis in 6 Eenvoudige Stappen</h2>
+    content_nl: `<h2>Uw Leesreis in 6 Eenvoudige Stappen</h2>
 <p>Beginnen met de Arabische Jeugdbibliotheek is eenvoudig en betaalbaar. Hier leest u hoe u uw reis in de prachtige wereld van Arabische boeken kunt beginnen:</p>
 
 <h3>1. Blader Door Onze Catalogus</h3>
@@ -227,16 +175,16 @@ const seedDB = async () => {
 <h3>2. Reserveer Uw Boek</h3>
 <p>Een boek gevonden dat u leuk vindt? Klik gewoon op "Reserveren" en kies een handig ophaaltijdstip. Vul uw gegevens in en u ontvangt een bevestigingsmail met alle informatie die u nodig heeft. Zo simpel is het!</p>
 
-<h3>3. Bezoek Uw Locatie & Abonneer</h3>
+<h3>3. Bezoek Uw Locatie &amp; Abonneer</h3>
 <p>Kom naar het gekozen bibliotheekfiliaal op het geplande tijdstip. Bij uw <strong>eerste bezoek</strong> schrijft u zich in voor ons maandabonnement — een klein, betaalbaar bedrag dat u onbeperkt toegang geeft tot onze hele collectie. Ons vriendelijke personeel begeleidt u door het snelle registratieproces.</p>
 
 <h3>4. Haal Uw Boek Op</h3>
 <p>Haal uw gereserveerde boek op en het is helemaal van u om van te genieten! We bevestigen de ophaling en stellen een retourdatum in die voor u werkt. Geen haast — we willen dat u van elke pagina geniet op uw eigen tempo.</p>
 
-<h3>5. Lees & Geniet</h3>
+<h3>5. Lees &amp; Geniet</h3>
 <p>Neem uw boek mee naar huis en duik in de prachtige wereld van de Arabische literatuur. Of het nu een verhaaltje voor het slapengaan is, een weekendavontuur of een educatieve reis — geniet van elk moment met uw boek.</p>
 
-<h3>6. Retourneer & Leen Meer</h3>
+<h3>6. Retourneer &amp; Leen Meer</h3>
 <p>Als u klaar bent met lezen, breng het boek gewoon terug naar een van onze locaties. En hier komt het beste deel — met uw maandabonnement kunt u <strong>onbeperkt boeken</strong> lenen! Breng er een terug en haal meteen een ander op. Er is geen limiet aan het aantal boeken waar u van kunt genieten.</p>
 
 <h2>Waarom Abonneren?</h2>
@@ -250,15 +198,24 @@ const seedDB = async () => {
 </ul>
 
 <blockquote>Begin vandaag nog uw leesavontuur — blader door onze catalogus en reserveer uw eerste boek!</blockquote>`,
-    });
-    console.log('How It Works page content seeded');
-
-    console.log('\nSeed completed successfully!');
-    process.exit(0);
-  } catch (error) {
-    console.error('Seed error:', error);
-    process.exit(1);
-  }
+  },
 };
 
-seedDB();
+/**
+ * Find a page by slug, or create it with default content if missing.
+ */
+pageContentSchema.statics.getOrCreate = async function (slug) {
+  let page = await this.findOne({ slug });
+  if (!page) {
+    const defaults = DEFAULT_CONTENT[slug] || {};
+    page = await this.create({ slug, ...defaults });
+  } else if (!page.content_en && DEFAULT_CONTENT[slug]) {
+    // Backfill empty page with default content
+    const defaults = DEFAULT_CONTENT[slug];
+    Object.assign(page, defaults);
+    await page.save();
+  }
+  return page;
+};
+
+module.exports = mongoose.model('PageContent', pageContentSchema);
