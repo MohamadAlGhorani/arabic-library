@@ -9,9 +9,10 @@ import {
   HiOutlineCog6Tooth,
   HiOutlineBuildingStorefront,
   HiOutlineUsers,
+  HiOutlineXMark,
 } from 'react-icons/hi2';
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ isOpen, onClose }) {
   const { t } = useTranslation();
   const { isSuperAdmin } = useAuth();
 
@@ -30,28 +31,68 @@ export default function AdminSidebar() {
     );
   }
 
+  const navContent = (
+    <nav className="flex flex-col gap-1" aria-label="Admin navigation">
+      {links.map((link) => {
+        const Icon = link.icon;
+        return (
+          <NavLink
+            key={link.to}
+            to={link.to}
+            end={link.end}
+            onClick={onClose}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2 rounded transition-colors ${
+                isActive ? 'bg-emerald-600 text-white' : 'text-gray-300 hover:bg-gray-700'
+              }`
+            }
+          >
+            <Icon className="w-5 h-5 shrink-0" />
+            {link.label}
+          </NavLink>
+        );
+      })}
+    </nav>
+  );
+
   return (
-    <aside className="w-56 bg-gray-800 text-white min-h-[calc(100vh-56px)] p-4 shrink-0" aria-label="Sidebar">
-      <nav className="flex flex-col gap-1" aria-label="Admin navigation">
-        {links.map((link) => {
-          const Icon = link.icon;
-          return (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              end={link.end}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded transition-colors ${
-                  isActive ? 'bg-emerald-600 text-white' : 'text-gray-300 hover:bg-gray-700'
-                }`
-              }
+    <>
+      {/* Mobile backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40 md:hidden cursor-pointer"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Desktop sidebar (always visible on md+) */}
+      <aside
+        className="hidden md:block w-56 bg-gray-800 text-white min-h-[calc(100vh-56px)] p-4 shrink-0"
+        aria-label="Sidebar"
+      >
+        {navContent}
+      </aside>
+
+      {/* Mobile drawer (overlay, only when open) */}
+      {isOpen && (
+        <aside
+          className="fixed inset-y-0 start-0 z-50 w-64 bg-gray-800 text-white p-4 md:hidden"
+          aria-label="Sidebar"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-lg font-semibold">{t('nav.menu')}</span>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+              aria-label={t('books.close')}
             >
-              <Icon className="w-5 h-5 shrink-0" />
-              {link.label}
-            </NavLink>
-          );
-        })}
-      </nav>
-    </aside>
+              <HiOutlineXMark className="w-5 h-5" />
+            </button>
+          </div>
+          {navContent}
+        </aside>
+      )}
+    </>
   );
 }

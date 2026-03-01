@@ -1,8 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { HiOutlineBars3 } from 'react-icons/hi2';
 import { useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import AdminSidebar from './components/AdminSidebar';
 import Home from './pages/Home';
 import Reserve from './pages/Reserve';
@@ -16,7 +18,15 @@ import ManageLocations from './pages/admin/ManageLocations';
 import ManageAdmins from './pages/admin/ManageAdmins';
 
 function ProtectedRoute() {
+  const { t } = useTranslation();
   const { admin, loading } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+
+  // Close sidebar on route change
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
 
   if (loading) {
     return (
@@ -30,10 +40,29 @@ function ProtectedRoute() {
 
   return (
     <div className="flex">
-      <AdminSidebar />
+      <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex-1 bg-gray-50 min-h-[calc(100vh-56px)] overflow-auto">
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="md:hidden flex items-center gap-2 m-4 mb-0 px-3 py-2 bg-gray-800 text-white rounded-lg text-sm cursor-pointer hover:bg-gray-700 transition-colors"
+          aria-label={t('nav.menu')}
+        >
+          <HiOutlineBars3 className="w-5 h-5" />
+          {t('nav.menu')}
+        </button>
         <Outlet />
       </div>
+    </div>
+  );
+}
+
+function PublicLayout() {
+  return (
+    <div className="flex flex-col min-h-[calc(100vh-56px)]">
+      <div className="flex-1">
+        <Outlet />
+      </div>
+      <Footer />
     </div>
   );
 }
@@ -58,9 +87,11 @@ export default function App() {
         <Navbar />
         <main id="main-content">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/reserve/:id" element={<Reserve />} />
-          <Route path="/admin/login" element={<Login />} />
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/reserve/:id" element={<Reserve />} />
+            <Route path="/admin/login" element={<Login />} />
+          </Route>
           <Route path="/admin" element={<ProtectedRoute />}>
             <Route index element={<Dashboard />} />
             <Route path="books" element={<ManageBooks />} />

@@ -15,7 +15,8 @@
     "settings": "Settings",
     "locations": "Locations",
     "admins": "Admin Users",
-    "language": "Select language"
+    "language": "Select language",
+    "menu": "Menu"
   },
   "books": {
     "title": "Browse Books",
@@ -171,6 +172,7 @@
     "saved": "Settings saved!"
   },
   "footer": {
-    "text": "Arabic Youth Library"
+    "text": "Arabic Youth Library",
+    "rights": "All rights reserved."
   }
 }

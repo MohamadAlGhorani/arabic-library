@@ -15,7 +15,8 @@
     "settings": "Instellingen",
     "locations": "Locaties",
     "admins": "Beheerders",
-    "language": "Taal selecteren"
+    "language": "Taal selecteren",
+    "menu": "Menu"
   },
   "books": {
     "title": "Boeken Bekijken",
@@ -171,6 +172,7 @@
     "saved": "Instellingen opgeslagen!"
   },
   "footer": {
-    "text": "Arabische Jeugdbibliotheek"
+    "text": "Arabische Jeugdbibliotheek",
+    "rights": "Alle rechten voorbehouden."
   }
 }
