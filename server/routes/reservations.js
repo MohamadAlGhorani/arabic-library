@@ -3,7 +3,8 @@ const Reservation = require('../models/Reservation');
 const Book = require('../models/Book');
 const auth = require('../middleware/auth');
 const { resolveLocation } = require('../middleware/roles');
-const { sendPickupReminder, sendReturnReminder, sendReservationConfirmation, sendCollectionConfirmation, sendCancellationNotice } = require('../services/email');
+const Admin = require('../models/Admin');
+const { sendPickupReminder, sendReturnReminder, sendReservationConfirmation, sendCollectionConfirmation, sendCancellationNotice, sendNewReservationNotification, sendAdminPickupNotification, sendAdminReturnNotification, sendReturnExtensionNotice, sendReturnConfirmation } = require('../services/email');
 
 const router = express.Router();
 
@@ -47,14 +48,40 @@ router.post('/', async (req, res) => {
 
     // Send confirmation email (non-blocking — don't fail the reservation if email fails)
     const populatedBook = await Book.findById(bookId).populate('location', 'name');
+    const locationName = populatedBook?.location?.name || '';
+
     sendReservationConfirmation({
       to: email,
       name,
       bookTitle: book.title,
       date,
       time,
-      locationName: populatedBook?.location?.name || '',
+      locationName,
     }).catch((err) => console.error('Failed to send confirmation email:', err.message));
+
+    // Notify admins of the new reservation (non-blocking)
+    Admin.find({
+      isActive: true,
+      email: { $ne: '' },
+      $or: [
+        { role: 'super_admin' },
+        { role: 'location_admin', location: book.location },
+      ],
+    }).select('email').then((admins) => {
+      const adminEmails = admins.map((a) => a.email).filter(Boolean);
+      if (adminEmails.length > 0) {
+        sendNewReservationNotification({
+          to: adminEmails.join(','),
+          bookTitle: book.title,
+          customerName: name,
+          customerEmail: email,
+          customerPhone: phone || '',
+          date,
+          time,
+          locationName,
+        }).catch((err) => console.error('Failed to send admin notification email:', err.message));
+      }
+    }).catch((err) => console.error('Failed to query admins for notification:', err.message));
 
     res.status(201).json({
       message: 'Your reservation has been received. Please come at the selected time to collect your book.',
@@ -127,25 +154,34 @@ router.put('/:id', auth, resolveLocation, async (req, res) => {
     await reservation.save();
 
     // Send status notification emails (non-blocking)
-    if (reservation.email && (status === 'collected' || status === 'cancelled')) {
+    if (reservation.email) {
       const bookForEmail = await Book.findById(reservation.bookId)
         .select('title')
         .populate('location', 'name');
+      const bookTitle = bookForEmail?.title || 'Unknown';
+      const locationName = bookForEmail?.location?.name || '';
 
       if (status === 'collected') {
         sendCollectionConfirmation({
           to: reservation.email,
           name: reservation.name,
-          bookTitle: bookForEmail?.title || 'Unknown',
+          bookTitle,
           returnDate,
-          locationName: bookForEmail?.location?.name || '',
+          locationName,
         }).catch((err) => console.error('Failed to send collection email:', err.message));
+      } else if (status === 'completed') {
+        sendReturnConfirmation({
+          to: reservation.email,
+          name: reservation.name,
+          bookTitle,
+          locationName,
+        }).catch((err) => console.error('Failed to send return confirmation email:', err.message));
       } else if (status === 'cancelled') {
         sendCancellationNotice({
           to: reservation.email,
           name: reservation.name,
-          bookTitle: bookForEmail?.title || 'Unknown',
-          locationName: bookForEmail?.location?.name || '',
+          bookTitle,
+          locationName,
         }).catch((err) => console.error('Failed to send cancellation email:', err.message));
       }
     }
@@ -189,6 +225,21 @@ router.put('/:id/extend', auth, resolveLocation, async (req, res) => {
     reservation.returnReminderSent = false;
     await reservation.save();
 
+    // Notify customer of extended return date (non-blocking)
+    if (reservation.email) {
+      const bookForEmail = await Book.findById(reservation.bookId)
+        .select('title')
+        .populate('location', 'name');
+
+      sendReturnExtensionNotice({
+        to: reservation.email,
+        name: reservation.name,
+        bookTitle: bookForEmail?.title || 'Unknown',
+        newReturnDate: returnDate,
+        locationName: bookForEmail?.location?.name || '',
+      }).catch((err) => console.error('Failed to send return extension email:', err.message));
+    }
+
     const updated = await Reservation.findById(req.params.id).populate({
       path: 'bookId',
       select: 'title category status',
@@ -221,25 +272,76 @@ router.post('/:id/remind', auth, resolveLocation, async (req, res) => {
       return res.status(400).json({ message: 'Can only send reminders for pending or collected reservations' });
     }
 
+    const bookTitle = reservation.bookId?.title || 'Unknown';
+    const locationName = reservation.location?.name || '';
+    const locationId = reservation.location?._id;
+
     if (reservation.status === 'pending') {
       await sendPickupReminder({
         to: reservation.email,
         name: reservation.name,
-        bookTitle: reservation.bookId?.title || 'Unknown',
+        bookTitle,
         date: reservation.date,
         time: reservation.time,
-        locationName: reservation.location?.name || '',
+        locationName,
       });
       reservation.reminderSent = true;
+
+      // Also notify admins (non-blocking)
+      Admin.find({
+        isActive: true,
+        email: { $ne: '' },
+        $or: [
+          { role: 'super_admin' },
+          { role: 'location_admin', location: locationId },
+        ],
+      }).select('email').then((admins) => {
+        const adminEmails = admins.map((a) => a.email).filter(Boolean);
+        if (adminEmails.length > 0) {
+          sendAdminPickupNotification({
+            to: adminEmails.join(','),
+            customerName: reservation.name,
+            customerEmail: reservation.email,
+            customerPhone: reservation.phone || '',
+            bookTitle,
+            date: reservation.date,
+            time: reservation.time,
+            locationName,
+          }).catch((err) => console.error('Failed to send admin pickup notification:', err.message));
+        }
+      }).catch((err) => console.error('Failed to query admins for notification:', err.message));
     } else {
       await sendReturnReminder({
         to: reservation.email,
         name: reservation.name,
-        bookTitle: reservation.bookId?.title || 'Unknown',
+        bookTitle,
         returnDate: reservation.returnDate,
-        locationName: reservation.location?.name || '',
+        locationName,
       });
       reservation.returnReminderSent = true;
+
+      // Also notify admins (non-blocking)
+      Admin.find({
+        isActive: true,
+        email: { $ne: '' },
+        $or: [
+          { role: 'super_admin' },
+          { role: 'location_admin', location: locationId },
+        ],
+      }).select('email').then((admins) => {
+        const adminEmails = admins.map((a) => a.email).filter(Boolean);
+        if (adminEmails.length > 0) {
+          sendAdminReturnNotification({
+            to: adminEmails.join(','),
+            customerName: reservation.name,
+            customerEmail: reservation.email,
+            customerPhone: reservation.phone || '',
+            bookTitle,
+            returnDate: reservation.returnDate,
+            locationName,
+          }).catch((err) => console.error('Failed to send admin return notification:', err.message));
+        }
+      }).catch((err) => console.error('Failed to query admins for notification:', err.message));
     }
 
     await reservation.save();
