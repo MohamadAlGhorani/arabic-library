@@ -157,7 +157,10 @@
     "passwordOptional": "Leeg laten om huidig te behouden",
     "lastLoginCol": "Laatste Login",
     "noAdmins": "Geen beheerders gevonden",
-    "searchAdmins": "Zoek op naam of gebruikersnaam..."
+    "searchAdmins": "Zoek op naam of gebruikersnaam...",
+    "searchBooks": "Zoek op titel...",
+    "searchReservations": "Zoek op naam of e-mail...",
+    "allStatuses": "Alle Statussen"
   },
   "settings": {
     "title": "Bibliotheek Instellingen",

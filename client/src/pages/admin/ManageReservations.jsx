@@ -8,9 +8,10 @@ import {
   HiOutlineXMark,
   HiOutlineBellAlert,
   HiOutlineCalendarDays,
+  HiOutlineMagnifyingGlass,
 } from 'react-icons/hi2';
 import { useAuth } from '../../context/AuthContext';
-import { getReservations, updateReservation, sendReminder, extendReservation } from '../../services/api';
+import { getReservations, updateReservation, sendReminder, extendReservation, getLocations } from '../../services/api';
 
 const statusColors = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -52,17 +53,21 @@ export default function ManageReservations() {
   const { t } = useTranslation();
   const { admin, isSuperAdmin } = useAuth();
   const [reservations, setReservations] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [sendingId, setSendingId] = useState(null);
+  const [search, setSearch] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filterLocation, setFilterLocation] = useState('');
 
   // Collect modal state
-  const [collectModal, setCollectModal] = useState(null); // reservation id
-  const [collectMode, setCollectMode] = useState('week'); // 'week' or 'specific'
+  const [collectModal, setCollectModal] = useState(null);
+  const [collectMode, setCollectMode] = useState('week');
   const [collectSpecificDate, setCollectSpecificDate] = useState('');
   const [collectWeekday, setCollectWeekday] = useState(new Date().getDay());
   const [collectSaving, setCollectSaving] = useState(false);
 
   // Extend modal state
-  const [extendModal, setExtendModal] = useState(null); // reservation object
+  const [extendModal, setExtendModal] = useState(null);
   const [extendMode, setExtendMode] = useState('week');
   const [extendSpecificDate, setExtendSpecificDate] = useState('');
   const [extendWeekday, setExtendWeekday] = useState(new Date().getDay());
@@ -83,12 +88,22 @@ export default function ManageReservations() {
     if (!isSuperAdmin && admin?.location?._id) {
       params.locationId = admin.location._id;
     }
+    if (search) params.search = search;
+    if (filterStatus) params.status = filterStatus;
+    if (filterLocation && isSuperAdmin) params.locationId = filterLocation;
     getReservations(params).then((res) => setReservations(res.data));
   };
 
   useEffect(() => {
     loadReservations();
+    if (isSuperAdmin) {
+      getLocations().then((res) => setLocations(res.data));
+    }
   }, []);
+
+  useEffect(() => {
+    loadReservations();
+  }, [search, filterStatus, filterLocation]);
 
   const handleStatusChange = async (id, status, returnDate) => {
     await updateReservation(id, { status, returnDate });
@@ -187,6 +202,48 @@ export default function ManageReservations() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">{t('admin.manageReservations')}</h1>
+
+      {/* Filters */}
+      <div className="bg-white rounded-xl shadow p-4 mb-4">
+        <div className="flex flex-wrap gap-3">
+          <div className="relative flex-1 min-w-[180px]">
+            <HiOutlineMagnifyingGlass className="absolute top-1/2 -translate-y-1/2 start-3 w-4 h-4 text-gray-400 pointer-events-none" />
+            <input
+              type="text"
+              placeholder={t('admin.searchReservations')}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full ps-9 pe-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              aria-label={t('admin.searchReservations')}
+            />
+          </div>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            aria-label={t('admin.allStatuses')}
+          >
+            <option value="">{t('admin.allStatuses')}</option>
+            <option value="pending">{t('admin.pending')}</option>
+            <option value="collected">{t('admin.collected')}</option>
+            <option value="completed">{t('admin.completed')}</option>
+            <option value="cancelled">{t('admin.cancelled')}</option>
+          </select>
+          {isSuperAdmin && (
+            <select
+              value={filterLocation}
+              onChange={(e) => setFilterLocation(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              aria-label={t('books.allLocations')}
+            >
+              <option value="">{t('books.allLocations')}</option>
+              {locations.map((loc) => (
+                <option key={loc._id} value={loc._id}>{loc.name}</option>
+              ))}
+            </select>
+          )}
+        </div>
+      </div>
 
       {reservations.length === 0 ? (
         <div className="bg-white rounded-xl shadow p-8 text-center text-gray-500">

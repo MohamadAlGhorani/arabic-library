@@ -95,9 +95,19 @@ router.post('/', async (req, res) => {
 // GET /api/reservations - admin
 router.get('/', auth, resolveLocation, async (req, res) => {
   try {
+    const { search, status } = req.query;
     const filter = {};
     if (req.effectiveLocationId) {
       filter.location = req.effectiveLocationId;
+    }
+
+    if (status) {
+      filter.status = status;
+    }
+
+    if (search) {
+      const regex = { $regex: search, $options: 'i' };
+      filter.$or = [{ name: regex }, { email: regex }];
     }
 
     const reservations = await Reservation.find(filter)
@@ -106,6 +116,7 @@ router.get('/', auth, resolveLocation, async (req, res) => {
         select: 'title category status',
         populate: { path: 'category', select: 'name' },
       })
+      .populate('location', 'name')
       .sort({ createdAt: -1 });
 
     res.json(reservations);

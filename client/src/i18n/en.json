@@ -157,7 +157,10 @@
     "passwordOptional": "Leave empty to keep current",
     "lastLoginCol": "Last Login",
     "noAdmins": "No admin users found",
-    "searchAdmins": "Search by name or username..."
+    "searchAdmins": "Search by name or username...",
+    "searchBooks": "Search by title...",
+    "searchReservations": "Search by name or email...",
+    "allStatuses": "All Statuses"
   },
   "settings": {
     "title": "Library Settings",

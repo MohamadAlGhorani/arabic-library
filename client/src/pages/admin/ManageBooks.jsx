@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { HiOutlinePlus, HiOutlineXMark, HiOutlinePencilSquare, HiOutlineTrash, HiOutlineCheck, HiOutlineBookOpen } from 'react-icons/hi2';
+import { HiOutlinePlus, HiOutlineXMark, HiOutlinePencilSquare, HiOutlineTrash, HiOutlineCheck, HiOutlineBookOpen, HiOutlineMagnifyingGlass } from 'react-icons/hi2';
 import { useAuth } from '../../context/AuthContext';
 import { getBooks, getCategories, getLocations, createBook, updateBook, deleteBook } from '../../services/api';
 
@@ -21,12 +21,20 @@ export default function ManageBooks() {
   const [form, setForm] = useState({ title: '', description: '', category: '', status: 'available', location: '' });
   const [imageFile, setImageFile] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [search, setSearch] = useState('');
+  const [filterCategory, setFilterCategory] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filterLocation, setFilterLocation] = useState('');
 
   const loadBooks = () => {
     const params = {};
     if (!isSuperAdmin && admin?.location?._id) {
       params.location = admin.location._id;
     }
+    if (search) params.search = search;
+    if (filterCategory) params.category = filterCategory;
+    if (filterStatus) params.status = filterStatus;
+    if (filterLocation && isSuperAdmin) params.location = filterLocation;
     getBooks(params).then((res) => setBooks(res.data));
   };
 
@@ -37,6 +45,10 @@ export default function ManageBooks() {
       getLocations().then((res) => setLocations(res.data));
     }
   }, []);
+
+  useEffect(() => {
+    loadBooks();
+  }, [search, filterCategory, filterStatus, filterLocation]);
 
   const resetForm = () => {
     setForm({ title: '', description: '', category: '', status: 'available', location: '' });
@@ -217,6 +229,58 @@ export default function ManageBooks() {
           </button>
         </form>
       )}
+
+      {/* Filters */}
+      <div className="bg-white rounded-xl shadow p-4 mb-4">
+        <div className="flex flex-wrap gap-3">
+          <div className="relative flex-1 min-w-[180px]">
+            <HiOutlineMagnifyingGlass className="absolute top-1/2 -translate-y-1/2 start-3 w-4 h-4 text-gray-400 pointer-events-none" />
+            <input
+              type="text"
+              placeholder={t('admin.searchBooks')}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full ps-9 pe-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              aria-label={t('admin.searchBooks')}
+            />
+          </div>
+          <select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            aria-label={t('books.allCategories')}
+          >
+            <option value="">{t('books.allCategories')}</option>
+            {categories.map((cat) => (
+              <option key={cat._id} value={cat._id}>{cat.name}</option>
+            ))}
+          </select>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            aria-label={t('admin.allStatuses')}
+          >
+            <option value="">{t('admin.allStatuses')}</option>
+            <option value="available">{t('books.available')}</option>
+            <option value="reserved">{t('books.reserved')}</option>
+            <option value="borrowed">{t('books.borrowed')}</option>
+          </select>
+          {isSuperAdmin && (
+            <select
+              value={filterLocation}
+              onChange={(e) => setFilterLocation(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              aria-label={t('books.allLocations')}
+            >
+              <option value="">{t('books.allLocations')}</option>
+              {locations.map((loc) => (
+                <option key={loc._id} value={loc._id}>{loc.name}</option>
+              ))}
+            </select>
+          )}
+        </div>
+      </div>
 
       <div className="bg-white rounded-xl shadow overflow-x-auto">
         <table className="w-full text-sm">

@@ -257,49 +257,51 @@ export default function ManageAdmins() {
       )}
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3 mb-4">
-        <div className="relative flex-1 min-w-[180px]">
-          <HiOutlineMagnifyingGlass className="absolute top-1/2 -translate-y-1/2 start-3 w-4 h-4 text-gray-400 pointer-events-none" />
-          <input
-            type="text"
-            placeholder={t('admin.searchAdmins')}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full ps-9 pe-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            aria-label={t('admin.searchAdmins')}
-          />
+      <div className="bg-white rounded-xl shadow p-4 mb-4">
+        <div className="flex flex-wrap gap-3">
+          <div className="relative flex-1 min-w-[180px]">
+            <HiOutlineMagnifyingGlass className="absolute top-1/2 -translate-y-1/2 start-3 w-4 h-4 text-gray-400 pointer-events-none" />
+            <input
+              type="text"
+              placeholder={t('admin.searchAdmins')}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full ps-9 pe-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              aria-label={t('admin.searchAdmins')}
+            />
+          </div>
+          <select
+            value={filterRole}
+            onChange={(e) => setFilterRole(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            aria-label={t('admin.adminRole')}
+          >
+            <option value="">{t('admin.adminRole')}</option>
+            <option value="super_admin">{t('admin.roleSuperAdmin')}</option>
+            <option value="location_admin">{t('admin.roleLocationAdmin')}</option>
+          </select>
+          <select
+            value={filterLocation}
+            onChange={(e) => setFilterLocation(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            aria-label={t('books.allLocations')}
+          >
+            <option value="">{t('books.allLocations')}</option>
+            {locations.map((loc) => (
+              <option key={loc._id} value={loc._id}>{loc.name}</option>
+            ))}
+          </select>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            aria-label={t('admin.adminStatus')}
+          >
+            <option value="">{t('admin.adminStatus')}</option>
+            <option value="true">{t('admin.active')}</option>
+            <option value="false">{t('admin.inactive')}</option>
+          </select>
         </div>
-        <select
-          value={filterRole}
-          onChange={(e) => setFilterRole(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-          aria-label={t('admin.adminRole')}
-        >
-          <option value="">{t('admin.adminRole')}</option>
-          <option value="super_admin">{t('admin.roleSuperAdmin')}</option>
-          <option value="location_admin">{t('admin.roleLocationAdmin')}</option>
-        </select>
-        <select
-          value={filterLocation}
-          onChange={(e) => setFilterLocation(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-          aria-label={t('books.allLocations')}
-        >
-          <option value="">{t('books.allLocations')}</option>
-          {locations.map((loc) => (
-            <option key={loc._id} value={loc._id}>{loc.name}</option>
-          ))}
-        </select>
-        <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-          aria-label={t('admin.adminStatus')}
-        >
-          <option value="">{t('admin.adminStatus')}</option>
-          <option value="true">{t('admin.active')}</option>
-          <option value="false">{t('admin.inactive')}</option>
-        </select>
       </div>
 
       {admins.length === 0 ? (

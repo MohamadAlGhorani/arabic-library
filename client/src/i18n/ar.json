@@ -157,7 +157,10 @@
     "passwordOptional": "اتركه فارغاً للإبقاء على الحالي",
     "lastLoginCol": "آخر دخول",
     "noAdmins": "لا يوجد مستخدمون",
-    "searchAdmins": "البحث بالاسم أو اسم المستخدم..."
+    "searchAdmins": "البحث بالاسم أو اسم المستخدم...",
+    "searchBooks": "البحث بالعنوان...",
+    "searchReservations": "البحث بالاسم أو البريد الإلكتروني...",
+    "allStatuses": "جميع الحالات"
   },
   "settings": {
     "title": "إعدادات المكتبة",
