@@ -1,15 +1,31 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HiOutlineBookOpen, HiOutlineCheckCircle, HiOutlineCalendar, HiOutlineArrowPath, HiOutlineClipboardDocumentList } from 'react-icons/hi2';
-import { getStats } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
+import { getStats, getLocations } from '../../services/api';
 
 export default function Dashboard() {
   const { t } = useTranslation();
+  const { admin, isSuperAdmin } = useAuth();
   const [stats, setStats] = useState(null);
+  const [locations, setLocations] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState('');
 
   useEffect(() => {
-    getStats().then((res) => setStats(res.data));
-  }, []);
+    if (isSuperAdmin) {
+      getLocations().then((res) => setLocations(res.data));
+    }
+  }, [isSuperAdmin]);
+
+  useEffect(() => {
+    const params = {};
+    if (isSuperAdmin && selectedLocation) {
+      params.locationId = selectedLocation;
+    } else if (!isSuperAdmin && admin?.location?._id) {
+      params.locationId = admin.location._id;
+    }
+    getStats(params).then((res) => setStats(res.data));
+  }, [selectedLocation, admin, isSuperAdmin]);
 
   if (!stats) {
     return <div className="p-6 text-gray-500">Loading...</div>;
@@ -25,7 +41,21 @@ export default function Dashboard() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">{t('admin.dashboard')}</h1>
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <h1 className="text-2xl font-bold text-gray-800">{t('admin.dashboard')}</h1>
+        {isSuperAdmin && locations.length > 0 && (
+          <select
+            value={selectedLocation}
+            onChange={(e) => setSelectedLocation(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="">{t('books.allLocations')}</option>
+            {locations.map((loc) => (
+              <option key={loc._id} value={loc._id}>{loc.name}</option>
+            ))}
+          </select>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
         {cards.map((card) => {

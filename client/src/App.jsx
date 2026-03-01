@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import AdminSidebar from './components/AdminSidebar';
 import Home from './pages/Home';
@@ -11,10 +12,22 @@ import ManageBooks from './pages/admin/ManageBooks';
 import ManageCategories from './pages/admin/ManageCategories';
 import ManageReservations from './pages/admin/ManageReservations';
 import ManageSettings from './pages/admin/ManageSettings';
+import ManageLocations from './pages/admin/ManageLocations';
+import ManageAdmins from './pages/admin/ManageAdmins';
 
 function ProtectedRoute() {
-  const token = localStorage.getItem('token');
-  if (!token) return <Navigate to="/admin/login" replace />;
+  const { admin, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-56px)]">
+        <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!admin) return <Navigate to="/admin/login" replace />;
+
   return (
     <div className="flex">
       <AdminSidebar />
@@ -23,6 +36,12 @@ function ProtectedRoute() {
       </div>
     </div>
   );
+}
+
+function SuperAdminRoute() {
+  const { isSuperAdmin } = useAuth();
+  if (!isSuperAdmin) return <Navigate to="/admin" replace />;
+  return <Outlet />;
 }
 
 export default function App() {
@@ -44,9 +63,13 @@ export default function App() {
           <Route path="/admin" element={<ProtectedRoute />}>
             <Route index element={<Dashboard />} />
             <Route path="books" element={<ManageBooks />} />
-            <Route path="categories" element={<ManageCategories />} />
             <Route path="reservations" element={<ManageReservations />} />
             <Route path="settings" element={<ManageSettings />} />
+            <Route element={<SuperAdminRoute />}>
+              <Route path="categories" element={<ManageCategories />} />
+              <Route path="locations" element={<ManageLocations />} />
+              <Route path="admins" element={<ManageAdmins />} />
+            </Route>
           </Route>
         </Routes>
       </div>

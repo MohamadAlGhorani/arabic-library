@@ -1,17 +1,34 @@
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { HiOutlineChartBarSquare, HiOutlineBookOpen, HiOutlineTag, HiOutlineCalendarDays, HiOutlineCog6Tooth } from 'react-icons/hi2';
+import { useAuth } from '../context/AuthContext';
+import {
+  HiOutlineChartBarSquare,
+  HiOutlineBookOpen,
+  HiOutlineTag,
+  HiOutlineCalendarDays,
+  HiOutlineCog6Tooth,
+  HiOutlineBuildingStorefront,
+  HiOutlineUsers,
+} from 'react-icons/hi2';
 
 export default function AdminSidebar() {
   const { t } = useTranslation();
+  const { isSuperAdmin } = useAuth();
 
   const links = [
     { to: '/admin', label: t('nav.dashboard'), end: true, icon: HiOutlineChartBarSquare },
     { to: '/admin/books', label: t('nav.books'), icon: HiOutlineBookOpen },
-    { to: '/admin/categories', label: t('nav.categories'), icon: HiOutlineTag },
     { to: '/admin/reservations', label: t('nav.reservations'), icon: HiOutlineCalendarDays },
     { to: '/admin/settings', label: t('nav.settings'), icon: HiOutlineCog6Tooth },
   ];
+
+  if (isSuperAdmin) {
+    links.push(
+      { to: '/admin/categories', label: t('nav.categories'), icon: HiOutlineTag },
+      { to: '/admin/locations', label: t('nav.locations'), icon: HiOutlineBuildingStorefront },
+      { to: '/admin/admins', label: t('nav.admins'), icon: HiOutlineUsers },
+    );
+  }
 
   return (
     <aside className="w-56 bg-gray-800 text-white min-h-[calc(100vh-56px)] p-4 shrink-0">

@@ -2,7 +2,8 @@ const express = require('express');
 const Reservation = require('../models/Reservation');
 const Book = require('../models/Book');
 const auth = require('../middleware/auth');
-const { sendPickupReminder, sendReturnReminder } = require('../services/email');
+const { resolveLocation } = require('../middleware/roles');
+const { sendPickupReminder, sendReturnReminder, sendReservationConfirmation, sendCollectionConfirmation, sendCancellationNotice } = require('../services/email');
 
 const router = express.Router();
 
@@ -37,11 +38,23 @@ router.post('/', async (req, res) => {
       phone: phone || '',
       date,
       time,
+      location: book.location,
     });
 
     // Update book status to reserved
     book.status = 'reserved';
     await book.save();
+
+    // Send confirmation email (non-blocking — don't fail the reservation if email fails)
+    const populatedBook = await Book.findById(bookId).populate('location', 'name');
+    sendReservationConfirmation({
+      to: email,
+      name,
+      bookTitle: book.title,
+      date,
+      time,
+      locationName: populatedBook?.location?.name || '',
+    }).catch((err) => console.error('Failed to send confirmation email:', err.message));
 
     res.status(201).json({
       message: 'Your reservation has been received. Please come at the selected time to collect your book.',
@@ -53,9 +66,14 @@ router.post('/', async (req, res) => {
 });
 
 // GET /api/reservations - admin
-router.get('/', auth, async (req, res) => {
+router.get('/', auth, resolveLocation, async (req, res) => {
   try {
-    const reservations = await Reservation.find()
+    const filter = {};
+    if (req.effectiveLocationId) {
+      filter.location = req.effectiveLocationId;
+    }
+
+    const reservations = await Reservation.find(filter)
       .populate({
         path: 'bookId',
         select: 'title category status',
@@ -70,7 +88,7 @@ router.get('/', auth, async (req, res) => {
 });
 
 // PUT /api/reservations/:id - admin (change status)
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', auth, resolveLocation, async (req, res) => {
   try {
     const { status, returnDate } = req.body;
 
@@ -81,6 +99,11 @@ router.put('/:id', auth, async (req, res) => {
     const reservation = await Reservation.findById(req.params.id);
     if (!reservation) {
       return res.status(404).json({ message: 'Reservation not found' });
+    }
+
+    // Location admin can only manage their own location's reservations
+    if (req.adminRole !== 'super_admin' && reservation.location.toString() !== req.effectiveLocationId) {
+      return res.status(403).json({ message: 'Not authorized for this location' });
     }
 
     reservation.status = status;
@@ -103,6 +126,30 @@ router.put('/:id', auth, async (req, res) => {
 
     await reservation.save();
 
+    // Send status notification emails (non-blocking)
+    if (reservation.email && (status === 'collected' || status === 'cancelled')) {
+      const bookForEmail = await Book.findById(reservation.bookId)
+        .select('title')
+        .populate('location', 'name');
+
+      if (status === 'collected') {
+        sendCollectionConfirmation({
+          to: reservation.email,
+          name: reservation.name,
+          bookTitle: bookForEmail?.title || 'Unknown',
+          returnDate,
+          locationName: bookForEmail?.location?.name || '',
+        }).catch((err) => console.error('Failed to send collection email:', err.message));
+      } else if (status === 'cancelled') {
+        sendCancellationNotice({
+          to: reservation.email,
+          name: reservation.name,
+          bookTitle: bookForEmail?.title || 'Unknown',
+          locationName: bookForEmail?.location?.name || '',
+        }).catch((err) => console.error('Failed to send cancellation email:', err.message));
+      }
+    }
+
     const updated = await Reservation.findById(req.params.id).populate({
       path: 'bookId',
       select: 'title category status',
@@ -116,7 +163,7 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // PUT /api/reservations/:id/extend - admin (extend return date)
-router.put('/:id/extend', auth, async (req, res) => {
+router.put('/:id/extend', auth, resolveLocation, async (req, res) => {
   try {
     const { returnDate } = req.body;
 
@@ -127,6 +174,11 @@ router.put('/:id/extend', auth, async (req, res) => {
     const reservation = await Reservation.findById(req.params.id);
     if (!reservation) {
       return res.status(404).json({ message: 'Reservation not found' });
+    }
+
+    // Location admin can only extend their own location's reservations
+    if (req.adminRole !== 'super_admin' && reservation.location.toString() !== req.effectiveLocationId) {
+      return res.status(403).json({ message: 'Not authorized for this location' });
     }
 
     if (reservation.status !== 'collected') {
@@ -150,15 +202,19 @@ router.put('/:id/extend', auth, async (req, res) => {
 });
 
 // POST /api/reservations/:id/remind - admin sends reminder email manually
-router.post('/:id/remind', auth, async (req, res) => {
+router.post('/:id/remind', auth, resolveLocation, async (req, res) => {
   try {
-    const reservation = await Reservation.findById(req.params.id).populate({
-      path: 'bookId',
-      select: 'title',
-    });
+    const reservation = await Reservation.findById(req.params.id)
+      .populate({ path: 'bookId', select: 'title' })
+      .populate({ path: 'location', select: 'name' });
 
     if (!reservation) {
       return res.status(404).json({ message: 'Reservation not found' });
+    }
+
+    // Location admin can only send reminders for their own location's reservations
+    if (req.adminRole !== 'super_admin' && reservation.location?._id?.toString() !== req.effectiveLocationId) {
+      return res.status(403).json({ message: 'Not authorized for this location' });
     }
 
     if (!['pending', 'collected'].includes(reservation.status)) {
@@ -172,6 +228,7 @@ router.post('/:id/remind', auth, async (req, res) => {
         bookTitle: reservation.bookId?.title || 'Unknown',
         date: reservation.date,
         time: reservation.time,
+        locationName: reservation.location?.name || '',
       });
       reservation.reminderSent = true;
     } else {
@@ -180,6 +237,7 @@ router.post('/:id/remind', auth, async (req, res) => {
         name: reservation.name,
         bookTitle: reservation.bookId?.title || 'Unknown',
         returnDate: reservation.returnDate,
+        locationName: reservation.location?.name || '',
       });
       reservation.returnReminderSent = true;
     }

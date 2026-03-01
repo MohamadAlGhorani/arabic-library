@@ -12,7 +12,9 @@
     "books": "Boeken",
     "categories": "Categorieën",
     "reservations": "Reserveringen",
-    "settings": "Instellingen"
+    "settings": "Instellingen",
+    "locations": "Locaties",
+    "admins": "Beheerders"
   },
   "books": {
     "title": "Boeken Bekijken",
@@ -23,7 +25,8 @@
     "reserved": "Gereserveerd",
     "borrowed": "Uitgeleend",
     "reserve": "Reserveren",
-    "noBooks": "Geen boeken gevonden"
+    "noBooks": "Geen boeken gevonden",
+    "allLocations": "Alle Locaties"
   },
   "reservation": {
     "title": "Boek Reserveren",
@@ -112,7 +115,38 @@
     "onTrack": "Op Schema",
     "borrowedBooksSection": "Momenteel Uitgeleende Boeken",
     "borrowerCol": "Lener",
-    "noBorrowedBooks": "Geen boeken momenteel uitgeleend"
+    "noBorrowedBooks": "Geen boeken momenteel uitgeleend",
+    "locationCol": "Locatie",
+    "selectLocation": "Selecteer locatie",
+    "manageLocations": "Locaties Beheren",
+    "addLocation": "Locatie Toevoegen",
+    "editLocation": "Locatie Bewerken",
+    "locationName": "Locatienaam",
+    "locationAddress": "Adres",
+    "locationPhone": "Telefoon",
+    "locationDescription": "Beschrijving",
+    "locationImage": "Afbeelding",
+    "manageAdmins": "Beheerders Beheren",
+    "addAdmin": "Beheerder Toevoegen",
+    "editAdmin": "Beheerder Bewerken",
+    "adminUsername": "Gebruikersnaam",
+    "adminPassword": "Wachtwoord",
+    "adminFullName": "Volledige Naam",
+    "adminEmail": "E-mail",
+    "adminPhone": "Telefoon",
+    "adminRole": "Rol",
+    "adminLocation": "Locatie",
+    "adminStatus": "Status",
+    "roleSuperAdmin": "Hoofdbeheerder",
+    "roleLocationAdmin": "Locatiebeheerder",
+    "active": "Actief",
+    "inactive": "Inactief",
+    "activate": "Activeren",
+    "deactivate": "Deactiveren",
+    "passwordOptional": "Leeg laten om huidig te behouden",
+    "lastLoginCol": "Laatste Login",
+    "noAdmins": "Geen beheerders gevonden",
+    "searchAdmins": "Zoek op naam of gebruikersnaam..."
   },
   "settings": {
     "title": "Bibliotheek Instellingen",

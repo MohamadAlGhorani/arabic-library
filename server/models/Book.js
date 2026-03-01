@@ -24,6 +24,11 @@ const bookSchema = new mongoose.Schema({
     enum: ['available', 'reserved', 'borrowed'],
     default: 'available',
   },
+  location: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Location',
+    required: [true, 'Location is required'],
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Book', bookSchema);

@@ -1,6 +1,7 @@
 const express = require('express');
 const Book = require('../models/Book');
 const auth = require('../middleware/auth');
+const { resolveLocation } = require('../middleware/roles');
 const upload = require('../middleware/upload');
 const fs = require('fs');
 const path = require('path');
@@ -10,7 +11,7 @@ const router = express.Router();
 // GET /api/books - public
 router.get('/', async (req, res) => {
   try {
-    const { search, category, status } = req.query;
+    const { search, category, status, location } = req.query;
     const filter = {};
 
     if (search) {
@@ -22,9 +23,13 @@ router.get('/', async (req, res) => {
     if (status) {
       filter.status = status;
     }
+    if (location) {
+      filter.location = location;
+    }
 
     const books = await Book.find(filter)
       .populate('category', 'name')
+      .populate('location', 'name')
       .sort({ createdAt: -1 });
 
     res.json(books);
@@ -36,7 +41,9 @@ router.get('/', async (req, res) => {
 // GET /api/books/:id - public
 router.get('/:id', async (req, res) => {
   try {
-    const book = await Book.findById(req.params.id).populate('category', 'name');
+    const book = await Book.findById(req.params.id)
+      .populate('category', 'name')
+      .populate('location', 'name');
     if (!book) {
       return res.status(404).json({ message: 'Book not found' });
     }
@@ -47,7 +54,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/books - admin
-router.post('/', auth, upload.single('image'), async (req, res) => {
+router.post('/', auth, resolveLocation, upload.single('image'), async (req, res) => {
   try {
     const { title, description, category, status } = req.body;
 
@@ -55,14 +62,28 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
       return res.status(400).json({ message: 'Title, description, and category are required' });
     }
 
-    const bookData = { title, description, category, status: status || 'available' };
+    const locationId = req.body.location || req.effectiveLocationId;
+    if (!locationId) {
+      return res.status(400).json({ message: 'Location is required' });
+    }
+
+    const bookData = {
+      title,
+      description,
+      category,
+      status: status || 'available',
+      location: locationId,
+    };
 
     if (req.file) {
       bookData.image = `/uploads/${req.file.filename}`;
     }
 
     const book = await Book.create(bookData);
-    const populated = await book.populate('category', 'name');
+    const populated = await book.populate([
+      { path: 'category', select: 'name' },
+      { path: 'location', select: 'name' },
+    ]);
     res.status(201).json(populated);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -70,13 +91,18 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
 });
 
 // PUT /api/books/:id - admin
-router.put('/:id', auth, upload.single('image'), async (req, res) => {
+router.put('/:id', auth, resolveLocation, upload.single('image'), async (req, res) => {
   try {
     const { title, description, category, status } = req.body;
     const book = await Book.findById(req.params.id);
 
     if (!book) {
       return res.status(404).json({ message: 'Book not found' });
+    }
+
+    // Location admin can only edit books in their location
+    if (req.adminRole !== 'super_admin' && book.location.toString() !== req.effectiveLocationId) {
+      return res.status(403).json({ message: 'Not authorized for this location' });
     }
 
     if (title) book.title = title;
@@ -96,7 +122,10 @@ router.put('/:id', auth, upload.single('image'), async (req, res) => {
     }
 
     await book.save();
-    const populated = await book.populate('category', 'name');
+    const populated = await book.populate([
+      { path: 'category', select: 'name' },
+      { path: 'location', select: 'name' },
+    ]);
     res.json(populated);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -104,11 +133,16 @@ router.put('/:id', auth, upload.single('image'), async (req, res) => {
 });
 
 // DELETE /api/books/:id - admin
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', auth, resolveLocation, async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
     if (!book) {
       return res.status(404).json({ message: 'Book not found' });
+    }
+
+    // Location admin can only delete books in their location
+    if (req.adminRole !== 'super_admin' && book.location.toString() !== req.effectiveLocationId) {
+      return res.status(403).json({ message: 'Not authorized for this location' });
     }
 
     // Remove image file

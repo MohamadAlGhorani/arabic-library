@@ -6,6 +6,11 @@ const reservationSchema = new mongoose.Schema({
     ref: 'Book',
     required: [true, 'Book is required'],
   },
+  location: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Location',
+    required: [true, 'Location is required'],
+  },
   name: {
     type: String,
     required: [true, 'Name is required'],

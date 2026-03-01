@@ -12,7 +12,9 @@
     "books": "Books",
     "categories": "Categories",
     "reservations": "Reservations",
-    "settings": "Settings"
+    "settings": "Settings",
+    "locations": "Locations",
+    "admins": "Admin Users"
   },
   "books": {
     "title": "Browse Books",
@@ -23,7 +25,8 @@
     "reserved": "Reserved",
     "borrowed": "Borrowed",
     "reserve": "Reserve",
-    "noBooks": "No books found"
+    "noBooks": "No books found",
+    "allLocations": "All Locations"
   },
   "reservation": {
     "title": "Reserve Book",
@@ -112,7 +115,38 @@
     "onTrack": "On Track",
     "borrowedBooksSection": "Currently Borrowed Books",
     "borrowerCol": "Borrower",
-    "noBorrowedBooks": "No books currently borrowed"
+    "noBorrowedBooks": "No books currently borrowed",
+    "locationCol": "Location",
+    "selectLocation": "Select location",
+    "manageLocations": "Manage Locations",
+    "addLocation": "Add Location",
+    "editLocation": "Edit Location",
+    "locationName": "Location Name",
+    "locationAddress": "Address",
+    "locationPhone": "Phone",
+    "locationDescription": "Description",
+    "locationImage": "Image",
+    "manageAdmins": "Manage Admin Users",
+    "addAdmin": "Add Admin",
+    "editAdmin": "Edit Admin",
+    "adminUsername": "Username",
+    "adminPassword": "Password",
+    "adminFullName": "Full Name",
+    "adminEmail": "Email",
+    "adminPhone": "Phone",
+    "adminRole": "Role",
+    "adminLocation": "Location",
+    "adminStatus": "Status",
+    "roleSuperAdmin": "Super Admin",
+    "roleLocationAdmin": "Location Admin",
+    "active": "Active",
+    "inactive": "Inactive",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "passwordOptional": "Leave empty to keep current",
+    "lastLoginCol": "Last Login",
+    "noAdmins": "No admin users found",
+    "searchAdmins": "Search by name or username..."
   },
   "settings": {
     "title": "Library Settings",

@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 
 const settingsSchema = new mongoose.Schema({
+  location: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Location',
+    required: [true, 'Location is required'],
+    unique: true,
+  },
   // Days of the week the library is open (0=Sunday, 1=Monday, ..., 6=Saturday)
   openDays: {
     type: [Number],

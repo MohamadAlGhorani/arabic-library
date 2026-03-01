@@ -1,24 +1,43 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HiOutlineCalendarDays, HiOutlineClock, HiOutlinePlus, HiOutlineXMark, HiOutlineCheck } from 'react-icons/hi2';
-import { getSettings, updateSettings } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
+import { getSettings, updateSettings, getLocations } from '../../services/api';
 
 const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6];
 
 export default function ManageSettings() {
   const { t } = useTranslation();
+  const { admin, isSuperAdmin } = useAuth();
+  const [locations, setLocations] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState('');
   const [openDays, setOpenDays] = useState([]);
   const [timeSlots, setTimeSlots] = useState([]);
   const [newSlot, setNewSlot] = useState({ from: '09:00', to: '10:00' });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
+  // Determine location ID to use
+  const locationId = isSuperAdmin ? selectedLocation : admin?.location?._id;
+
   useEffect(() => {
-    getSettings().then((res) => {
+    if (isSuperAdmin) {
+      getLocations().then((res) => {
+        setLocations(res.data);
+        if (res.data.length > 0) {
+          setSelectedLocation(res.data[0]._id);
+        }
+      });
+    }
+  }, [isSuperAdmin]);
+
+  useEffect(() => {
+    if (!locationId) return;
+    getSettings(locationId).then((res) => {
       setOpenDays(res.data.openDays);
       setTimeSlots(res.data.timeSlots);
     });
-  }, []);
+  }, [locationId]);
 
   const dayNames = [
     t('settings.sunday'),
@@ -51,7 +70,7 @@ export default function ManageSettings() {
     setSaving(true);
     setSaved(false);
     try {
-      await updateSettings({ openDays, timeSlots });
+      await updateSettings({ openDays, timeSlots, locationId });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -63,7 +82,20 @@ export default function ManageSettings() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">{t('settings.title')}</h1>
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <h1 className="text-2xl font-bold text-gray-800">{t('settings.title')}</h1>
+        {isSuperAdmin && locations.length > 0 && (
+          <select
+            value={selectedLocation}
+            onChange={(e) => setSelectedLocation(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            {locations.map((loc) => (
+              <option key={loc._id} value={loc._id}>{loc.name}</option>
+            ))}
+          </select>
+        )}
+      </div>
 
       {/* Open Days */}
       <div className="bg-white rounded-xl shadow p-5 mb-6">

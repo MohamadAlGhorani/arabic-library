@@ -44,16 +44,29 @@ export const deleteCategory = (id) => api.delete(`/categories/${id}`);
 
 // Reservations
 export const createReservation = (data) => api.post('/reservations', data);
-export const getReservations = () => api.get('/reservations');
+export const getReservations = (params) => api.get('/reservations', { params });
 export const updateReservation = (id, data) => api.put(`/reservations/${id}`, data);
 export const sendReminder = (id) => api.post(`/reservations/${id}/remind`);
 export const extendReservation = (id, data) => api.put(`/reservations/${id}/extend`, data);
 
 // Stats
-export const getStats = () => api.get('/stats');
+export const getStats = (params) => api.get('/stats', { params });
 
 // Settings
-export const getSettings = () => api.get('/settings');
+export const getSettings = (locationId) => api.get('/settings', { params: { locationId } });
 export const updateSettings = (data) => api.put('/settings', data);
+
+// Locations
+export const getLocations = () => api.get('/locations');
+export const createLocation = (data) => api.post('/locations', data);
+export const updateLocation = (id, data) => api.put(`/locations/${id}`, data);
+export const deleteLocation = (id) => api.delete(`/locations/${id}`);
+
+// Admin Users
+export const getAdmins = (params) => api.get('/admins', { params });
+export const createAdmin = (data) => api.post('/admins', data);
+export const updateAdmin = (id, data) => api.put(`/admins/${id}`, data);
+export const toggleAdmin = (id) => api.put(`/admins/${id}/toggle`);
+export const deleteAdmin = (id) => api.delete(`/admins/${id}`);
 
 export default api;

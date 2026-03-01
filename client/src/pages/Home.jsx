@@ -1,20 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HiOutlineMagnifyingGlass } from 'react-icons/hi2';
-import { getBooks, getCategories } from '../services/api';
+import { getBooks, getCategories, getLocations } from '../services/api';
 import BookCard from '../components/BookCard';
 
 export default function Home() {
   const { t } = useTranslation();
   const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [status, setStatus] = useState('');
+  const [location, setLocation] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getCategories().then((res) => setCategories(res.data));
+    getLocations().then((res) => setLocations(res.data));
   }, []);
 
   useEffect(() => {
@@ -23,11 +26,12 @@ export default function Home() {
     if (search) params.search = search;
     if (category) params.category = category;
     if (status) params.status = status;
+    if (location) params.location = location;
 
     getBooks(params)
       .then((res) => setBooks(res.data))
       .finally(() => setLoading(false));
-  }, [search, category, status]);
+  }, [search, category, status, location]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -60,6 +64,20 @@ export default function Home() {
             </option>
           ))}
         </select>
+        {locations.length > 1 && (
+          <select
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="">{t('books.allLocations')}</option>
+            {locations.map((loc) => (
+              <option key={loc._id} value={loc._id}>
+                {loc.name}
+              </option>
+            ))}
+          </select>
+        )}
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}

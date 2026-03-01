@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { HiOutlineUser, HiOutlineLockClosed, HiOutlineShieldCheck } from 'react-icons/hi2';
-import { login } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { loginAdmin } = useAuth();
   const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,8 +18,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await login(form);
-      localStorage.setItem('token', res.data.token);
+      await loginAdmin(form);
       navigate('/admin');
     } catch (err) {
       setError(t('admin.invalidCredentials'));

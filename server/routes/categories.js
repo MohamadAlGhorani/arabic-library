@@ -2,6 +2,7 @@ const express = require('express');
 const Category = require('../models/Category');
 const Book = require('../models/Book');
 const auth = require('../middleware/auth');
+const { requireSuperAdmin } = require('../middleware/roles');
 
 const router = express.Router();
 
@@ -15,8 +16,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST /api/categories - admin
-router.post('/', auth, async (req, res) => {
+// POST /api/categories - super admin only
+router.post('/', auth, requireSuperAdmin, async (req, res) => {
   try {
     const { name } = req.body;
     if (!name) {
@@ -35,8 +36,8 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// PUT /api/categories/:id - admin
-router.put('/:id', auth, async (req, res) => {
+// PUT /api/categories/:id - super admin only
+router.put('/:id', auth, requireSuperAdmin, async (req, res) => {
   try {
     const { name } = req.body;
     if (!name) {
@@ -59,8 +60,8 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-// DELETE /api/categories/:id - admin
-router.delete('/:id', auth, async (req, res) => {
+// DELETE /api/categories/:id - super admin only
+router.delete('/:id', auth, requireSuperAdmin, async (req, res) => {
   try {
     const booksCount = await Book.countDocuments({ category: req.params.id });
     if (booksCount > 0) {

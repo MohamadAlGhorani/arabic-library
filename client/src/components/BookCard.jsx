@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { HiOutlineCheckCircle, HiOutlineClock, HiOutlineBookOpen } from 'react-icons/hi2';
+import { HiOutlineCheckCircle, HiOutlineClock, HiOutlineBookOpen, HiOutlineBuildingStorefront } from 'react-icons/hi2';
 
 const statusColors = {
   available: 'bg-green-500',
@@ -19,6 +19,7 @@ export default function BookCard({ book }) {
 
   const statusLabel = t(`books.${book.status}`);
   const categoryName = book.category?.name || '';
+  const locationName = book.location?.name || '';
   const StatusIcon = statusIcons[book.status];
 
   return (
@@ -46,11 +47,19 @@ export default function BookCard({ book }) {
             {statusLabel}
           </span>
         </div>
-        {categoryName && (
-          <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full w-fit mb-2">
-            {categoryName}
-          </span>
-        )}
+        <div className="flex flex-wrap gap-1.5 mb-2">
+          {categoryName && (
+            <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+              {categoryName}
+            </span>
+          )}
+          {locationName && (
+            <span className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+              <HiOutlineBuildingStorefront className="w-3 h-3" />
+              {locationName}
+            </span>
+          )}
+        </div>
         <p className="text-gray-600 text-sm line-clamp-2 flex-1">{book.description}</p>
         {book.status === 'available' && (
           <Link

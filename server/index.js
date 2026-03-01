@@ -26,6 +26,12 @@ app.use('/api/categories', require('./routes/categories'));
 app.use('/api/reservations', require('./routes/reservations'));
 app.use('/api/stats', require('./routes/stats'));
 app.use('/api/settings', require('./routes/settings'));
+app.use('/api/locations', require('./routes/locations'));
+app.use('/api/admins', require('./routes/admins'));
+
+// Serve frontend in production
+const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
+app.use(express.static(clientBuildPath));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -36,6 +42,11 @@ app.use((err, req, res, next) => {
     return res.status(400).json({ message: err.message });
   }
   res.status(500).json({ message: 'Internal server error' });
+});
+
+// SPA fallback — serve index.html for all non-API routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(clientBuildPath, 'index.html'));
 });
 
 const PORT = process.env.PORT || 5000;

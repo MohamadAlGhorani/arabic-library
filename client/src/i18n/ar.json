@@ -12,7 +12,9 @@
     "books": "الكتب",
     "categories": "التصنيفات",
     "reservations": "الحجوزات",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "locations": "الفروع",
+    "admins": "المستخدمين"
   },
   "books": {
     "title": "تصفح الكتب",
@@ -23,7 +25,8 @@
     "reserved": "محجوز",
     "borrowed": "مُستعار",
     "reserve": "احجز",
-    "noBooks": "لا توجد كتب"
+    "noBooks": "لا توجد كتب",
+    "allLocations": "جميع الفروع"
   },
   "reservation": {
     "title": "حجز كتاب",
@@ -112,7 +115,38 @@
     "onTrack": "في الموعد",
     "borrowedBooksSection": "الكتب المستعارة حالياً",
     "borrowerCol": "المستعير",
-    "noBorrowedBooks": "لا توجد كتب مستعارة حالياً"
+    "noBorrowedBooks": "لا توجد كتب مستعارة حالياً",
+    "locationCol": "الفرع",
+    "selectLocation": "اختر الفرع",
+    "manageLocations": "إدارة الفروع",
+    "addLocation": "إضافة فرع",
+    "editLocation": "تعديل فرع",
+    "locationName": "اسم الفرع",
+    "locationAddress": "العنوان",
+    "locationPhone": "الهاتف",
+    "locationDescription": "الوصف",
+    "locationImage": "الصورة",
+    "manageAdmins": "إدارة المستخدمين",
+    "addAdmin": "إضافة مستخدم",
+    "editAdmin": "تعديل مستخدم",
+    "adminUsername": "اسم المستخدم",
+    "adminPassword": "كلمة المرور",
+    "adminFullName": "الاسم الكامل",
+    "adminEmail": "البريد الإلكتروني",
+    "adminPhone": "الهاتف",
+    "adminRole": "الدور",
+    "adminLocation": "الفرع",
+    "adminStatus": "الحالة",
+    "roleSuperAdmin": "مدير عام",
+    "roleLocationAdmin": "مدير فرع",
+    "active": "نشط",
+    "inactive": "معطّل",
+    "activate": "تفعيل",
+    "deactivate": "تعطيل",
+    "passwordOptional": "اتركه فارغاً للإبقاء على الحالي",
+    "lastLoginCol": "آخر دخول",
+    "noAdmins": "لا يوجد مستخدمون",
+    "searchAdmins": "البحث بالاسم أو اسم المستخدم..."
   },
   "settings": {
     "title": "إعدادات المكتبة",

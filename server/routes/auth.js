@@ -19,16 +19,35 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
+    if (!admin.isActive) {
+      return res.status(401).json({ message: 'Account is deactivated' });
+    }
+
     const isMatch = await admin.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, {
-      expiresIn: '7d',
-    });
+    // Update last login
+    admin.lastLogin = new Date();
+    await admin.save();
 
-    res.json({ token, username: admin.username });
+    const token = jwt.sign(
+      {
+        id: admin._id,
+        role: admin.role,
+        locationId: admin.location ? admin.location.toString() : null,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      token,
+      username: admin.username,
+      role: admin.role,
+      locationId: admin.location ? admin.location.toString() : null,
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -37,7 +56,9 @@ router.post('/login', async (req, res) => {
 // GET /api/auth/me
 router.get('/me', auth, async (req, res) => {
   try {
-    const admin = await Admin.findById(req.adminId).select('-password');
+    const admin = await Admin.findById(req.adminId)
+      .select('-password')
+      .populate('location', 'name');
     if (!admin) {
       return res.status(404).json({ message: 'Admin not found' });
     }

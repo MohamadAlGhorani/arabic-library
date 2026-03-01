@@ -9,6 +9,7 @@ import {
   HiOutlineBellAlert,
   HiOutlineCalendarDays,
 } from 'react-icons/hi2';
+import { useAuth } from '../../context/AuthContext';
 import { getReservations, updateReservation, sendReminder, extendReservation } from '../../services/api';
 
 const statusColors = {
@@ -49,6 +50,7 @@ function getReturnDateBadgeClass(returnDate) {
 
 export default function ManageReservations() {
   const { t } = useTranslation();
+  const { admin, isSuperAdmin } = useAuth();
   const [reservations, setReservations] = useState([]);
   const [sendingId, setSendingId] = useState(null);
 
@@ -76,7 +78,13 @@ export default function ManageReservations() {
     t('settings.saturday'),
   ];
 
-  const loadReservations = () => getReservations().then((res) => setReservations(res.data));
+  const loadReservations = () => {
+    const params = {};
+    if (!isSuperAdmin && admin?.location?._id) {
+      params.locationId = admin.location._id;
+    }
+    getReservations(params).then((res) => setReservations(res.data));
+  };
 
   useEffect(() => {
     loadReservations();

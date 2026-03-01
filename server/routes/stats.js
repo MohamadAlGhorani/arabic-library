@@ -3,12 +3,21 @@ const Book = require('../models/Book');
 const Reservation = require('../models/Reservation');
 const Category = require('../models/Category');
 const auth = require('../middleware/auth');
+const { resolveLocation } = require('../middleware/roles');
 
 const router = express.Router();
 
 // GET /api/stats - admin dashboard
-router.get('/', auth, async (req, res) => {
+router.get('/', auth, resolveLocation, async (req, res) => {
   try {
+    const bookFilter = {};
+    const reservationFilter = {};
+
+    if (req.effectiveLocationId) {
+      bookFilter.location = req.effectiveLocationId;
+      reservationFilter.location = req.effectiveLocationId;
+    }
+
     const [
       totalBooks,
       availableBooks,
@@ -18,13 +27,13 @@ router.get('/', auth, async (req, res) => {
       categories,
       borrowedReservations,
     ] = await Promise.all([
-      Book.countDocuments(),
-      Book.countDocuments({ status: 'available' }),
-      Book.countDocuments({ status: 'reserved' }),
-      Book.countDocuments({ status: 'borrowed' }),
-      Reservation.countDocuments(),
+      Book.countDocuments(bookFilter),
+      Book.countDocuments({ ...bookFilter, status: 'available' }),
+      Book.countDocuments({ ...bookFilter, status: 'reserved' }),
+      Book.countDocuments({ ...bookFilter, status: 'borrowed' }),
+      Reservation.countDocuments(reservationFilter),
       Category.find().lean(),
-      Reservation.find({ status: 'collected' })
+      Reservation.find({ ...reservationFilter, status: 'collected' })
         .populate('bookId', 'title')
         .sort({ returnDate: 1 })
         .lean(),
@@ -34,7 +43,7 @@ router.get('/', auth, async (req, res) => {
     const booksPerCategory = await Promise.all(
       categories.map(async (cat) => ({
         name: cat.name,
-        count: await Book.countDocuments({ category: cat._id }),
+        count: await Book.countDocuments({ ...bookFilter, category: cat._id }),
       }))
     );
 

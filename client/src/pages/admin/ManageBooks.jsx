@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HiOutlinePlus, HiOutlineXMark, HiOutlinePencilSquare, HiOutlineTrash, HiOutlineCheck, HiOutlineBookOpen } from 'react-icons/hi2';
-import { getBooks, getCategories, createBook, updateBook, deleteBook } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
+import { getBooks, getCategories, getLocations, createBook, updateBook, deleteBook } from '../../services/api';
 
 const statusColors = {
   available: 'bg-green-100 text-green-800',
@@ -11,23 +12,34 @@ const statusColors = {
 
 export default function ManageBooks() {
   const { t } = useTranslation();
+  const { admin, isSuperAdmin } = useAuth();
   const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ title: '', description: '', category: '', status: 'available' });
+  const [form, setForm] = useState({ title: '', description: '', category: '', status: 'available', location: '' });
   const [imageFile, setImageFile] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  const loadBooks = () => getBooks().then((res) => setBooks(res.data));
+  const loadBooks = () => {
+    const params = {};
+    if (!isSuperAdmin && admin?.location?._id) {
+      params.location = admin.location._id;
+    }
+    getBooks(params).then((res) => setBooks(res.data));
+  };
 
   useEffect(() => {
     loadBooks();
     getCategories().then((res) => setCategories(res.data));
+    if (isSuperAdmin) {
+      getLocations().then((res) => setLocations(res.data));
+    }
   }, []);
 
   const resetForm = () => {
-    setForm({ title: '', description: '', category: '', status: 'available' });
+    setForm({ title: '', description: '', category: '', status: 'available', location: '' });
     setImageFile(null);
     setEditing(null);
     setShowForm(false);
@@ -39,6 +51,7 @@ export default function ManageBooks() {
       description: book.description,
       category: book.category?._id || '',
       status: book.status,
+      location: book.location?._id || '',
     });
     setImageFile(null);
     setEditing(book._id);
@@ -60,6 +73,11 @@ export default function ManageBooks() {
     formData.append('description', form.description);
     formData.append('category', form.category);
     formData.append('status', form.status);
+    if (isSuperAdmin && form.location) {
+      formData.append('location', form.location);
+    } else if (!isSuperAdmin && admin?.location?._id) {
+      formData.append('location', admin.location._id);
+    }
     if (imageFile) {
       formData.append('image', imageFile);
     }
@@ -126,6 +144,24 @@ export default function ManageBooks() {
                 ))}
               </select>
             </div>
+            {isSuperAdmin && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('admin.locationCol')}
+                </label>
+                <select
+                  required
+                  value={form.location}
+                  onChange={(e) => setForm({ ...form, location: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                >
+                  <option value="">{t('admin.selectLocation')}</option>
+                  {locations.map((loc) => (
+                    <option key={loc._id} value={loc._id}>{loc.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.bookDescription')}
@@ -182,6 +218,9 @@ export default function ManageBooks() {
               <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.bookImage')}</th>
               <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.bookTitle')}</th>
               <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.bookCategory')}</th>
+              {isSuperAdmin && (
+                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.locationCol')}</th>
+              )}
               <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.bookStatus')}</th>
               <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.actionsCol')}</th>
             </tr>
@@ -200,6 +239,9 @@ export default function ManageBooks() {
                 </td>
                 <td className="px-4 py-3 font-medium text-gray-800">{book.title}</td>
                 <td className="px-4 py-3 text-gray-600">{book.category?.name}</td>
+                {isSuperAdmin && (
+                  <td className="px-4 py-3 text-gray-600">{book.location?.name || '-'}</td>
+                )}
                 <td className="px-4 py-3">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[book.status]}`}>
                     {t(`books.${book.status}`)}

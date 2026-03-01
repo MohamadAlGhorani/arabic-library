@@ -22,7 +22,9 @@ const startReminderScheduler = () => {
         status: 'pending',
         date: tomorrowStr,
         reminderSent: false,
-      }).populate({ path: 'bookId', select: 'title' });
+      })
+        .populate({ path: 'bookId', select: 'title' })
+        .populate({ path: 'location', select: 'name' });
 
       if (pickupReservations.length > 0) {
         console.log(`[Scheduler] Sending ${pickupReservations.length} pickup reminder(s)...`);
@@ -34,6 +36,7 @@ const startReminderScheduler = () => {
               bookTitle: reservation.bookId?.title || 'Unknown',
               date: reservation.date,
               time: reservation.time,
+              locationName: reservation.location?.name || '',
             });
             reservation.reminderSent = true;
             await reservation.save();
@@ -49,7 +52,9 @@ const startReminderScheduler = () => {
         status: 'collected',
         returnDate: tomorrowStr,
         returnReminderSent: false,
-      }).populate({ path: 'bookId', select: 'title' });
+      })
+        .populate({ path: 'bookId', select: 'title' })
+        .populate({ path: 'location', select: 'name' });
 
       if (returnReservations.length > 0) {
         console.log(`[Scheduler] Sending ${returnReservations.length} return reminder(s)...`);
@@ -60,6 +65,7 @@ const startReminderScheduler = () => {
               name: reservation.name,
               bookTitle: reservation.bookId?.title || 'Unknown',
               returnDate: reservation.returnDate,
+              locationName: reservation.location?.name || '',
             });
             reservation.returnReminderSent = true;
             await reservation.save();

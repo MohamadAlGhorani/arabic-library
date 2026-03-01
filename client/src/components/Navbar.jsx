@@ -1,15 +1,16 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { HiOutlineHome, HiOutlineShieldCheck, HiOutlineArrowRightOnRectangle, HiOutlineArrowLeftOnRectangle } from 'react-icons/hi2';
+import { useAuth } from '../context/AuthContext';
 import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Navbar() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const { admin, logoutAdmin } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    logoutAdmin();
     navigate('/');
   };
 
@@ -25,12 +26,15 @@ export default function Navbar() {
             <HiOutlineHome className="w-5 h-5" />
             {t('nav.home')}
           </Link>
-          {token ? (
+          {admin ? (
             <>
               <Link to="/admin" className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors">
                 <HiOutlineShieldCheck className="w-5 h-5" />
                 {t('nav.dashboard')}
               </Link>
+              <span className="text-emerald-200 text-sm hidden sm:inline">
+                {admin.fullName || admin.username}
+              </span>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors"

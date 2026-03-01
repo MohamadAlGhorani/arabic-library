@@ -7,7 +7,7 @@ import { ar as arLocale } from 'date-fns/locale/ar';
 import { nl as nlLocale } from 'date-fns/locale/nl';
 import { enUS as enLocale } from 'date-fns/locale/en-US';
 import 'react-day-picker/style.css';
-import { HiOutlineUser, HiOutlineEnvelope, HiOutlinePhone, HiOutlineCalendarDays, HiOutlineClock, HiOutlineCheckCircle, HiOutlineExclamationCircle } from 'react-icons/hi2';
+import { HiOutlineUser, HiOutlineEnvelope, HiOutlinePhone, HiOutlineCalendarDays, HiOutlineClock, HiOutlineCheckCircle, HiOutlineExclamationCircle, HiOutlineBuildingStorefront } from 'react-icons/hi2';
 import { getBook, createReservation, getSettings } from '../services/api';
 
 const localeMap = { ar: arLocale, nl: nlLocale, en: enLocale };
@@ -24,8 +24,19 @@ export default function Reserve() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    getBook(id).then((res) => setBook(res.data));
-    getSettings().then((res) => setSettings(res.data));
+    getBook(id)
+      .then((res) => {
+        setBook(res.data);
+        // Fetch settings for this book's location
+        const locId = res.data.location?._id || res.data.location;
+        if (locId) {
+          return getSettings(locId).then((sRes) => setSettings(sRes.data));
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load book or settings:', err);
+        setError(err.response?.data?.message || 'Failed to load book details');
+      });
   }, [id]);
 
   const handleDateSelect = (date) => {
@@ -50,7 +61,7 @@ export default function Reserve() {
     }
   };
 
-  if (!book || !settings) {
+  if (!book || (!settings && !error)) {
     return <div className="text-center py-12 text-gray-500">Loading...</div>;
   }
 
@@ -100,6 +111,12 @@ export default function Reserve() {
         <div>
           <p className="font-semibold text-gray-800">{book.title}</p>
           <p className="text-sm text-gray-500">{book.category?.name}</p>
+          {book.location?.name && (
+            <p className="text-xs text-blue-600 flex items-center gap-1 mt-0.5">
+              <HiOutlineBuildingStorefront className="w-3 h-3" />
+              {book.location.name}
+            </p>
+          )}
         </div>
       </div>
 
