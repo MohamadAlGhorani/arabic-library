@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="96" fill="#059669" />
+  <circle cx="100" cy="100" r="88" fill="#047857" />
+
+  <!-- Open book -->
+  <g transform="translate(100, 115)">
+    <!-- Left page -->
+    <path d="M-8 -10 Q-8 -45, -50 -50 L-50 10 Q-8 15, -8 -10Z" fill="#f0fdf4" stroke="#d1fae5" stroke-width="1"/>
+    <!-- Right page -->
+    <path d="M8 -10 Q8 -45, 50 -50 L50 10 Q8 15, 8 -10Z" fill="#ecfdf5" stroke="#d1fae5" stroke-width="1"/>
+    <!-- Spine -->
+    <path d="M-8 -10 Q0 -15, 8 -10 Q0 -5, -8 -10Z" fill="#d1fae5"/>
+    <line x1="0" y1="-12" x2="0" y2="12" stroke="#a7f3d0" stroke-width="1.5"/>
+
+    <!-- Arabic text lines on left page -->
+    <line x1="-18" y1="-30" x2="-42" y2="-30" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-15" y1="-22" x2="-40" y2="-22" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-16" y1="-14" x2="-38" y2="-14" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- Arabic text lines on right page -->
+    <line x1="18" y1="-30" x2="42" y2="-30" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round"/>
+    <line x1="15" y1="-22" x2="40" y2="-22" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round"/>
+    <line x1="16" y1="-14" x2="38" y2="-14" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Star and crescent (Arabic cultural symbol) -->
+  <g transform="translate(100, 52)">
+    <!-- Crescent -->
+    <path d="M-2 -22 A18 18 0 1 0 -2 22 A14 14 0 1 1 -2 -22Z" fill="#fbbf24" transform="rotate(-30)"/>
+    <!-- Star -->
+    <polygon points="18,0 20.5,-1.8 23,-3 21,-0.5 23,3 20.5,1.8 18,3.5 19,1 18,0" fill="#fbbf24" transform="translate(-2, -6) scale(0.9)"/>
+  </g>
+
+  <!-- Bottom arc text area -->
+  <path d="M35 155 Q100 180, 165 155" stroke="#a7f3d0" stroke-width="1.5" fill="none" opacity="0.5"/>
+</svg>

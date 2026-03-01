@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Background -->
+  <rect width="32" height="32" rx="6" fill="#059669"/>
+
+  <!-- Book icon -->
+  <g transform="translate(16, 19)">
+    <!-- Left page -->
+    <path d="M-1.5 -2 Q-1.5 -10, -10 -11 L-10 3 Q-1.5 4, -1.5 -2Z" fill="#f0fdf4"/>
+    <!-- Right page -->
+    <path d="M1.5 -2 Q1.5 -10, 10 -11 L10 3 Q1.5 4, 1.5 -2Z" fill="#ecfdf5"/>
+    <!-- Spine -->
+    <line x1="0" y1="-3" x2="0" y2="4" stroke="#a7f3d0" stroke-width="1"/>
+  </g>
+
+  <!-- Small crescent -->
+  <path d="M14 6 A4 4 0 1 0 14 14 A3.2 3.2 0 1 1 14 6Z" fill="#fbbf24" transform="rotate(-30, 16, 10)"/>
+  <!-- Small star -->
+  <circle cx="20.5" cy="7" r="1" fill="#fbbf24"/>
+</svg>

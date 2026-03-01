@@ -17,7 +17,8 @@ export default function Navbar() {
   return (
     <nav className="bg-emerald-700 text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-2">
-        <Link to="/" className="text-xl font-bold hover:text-emerald-200 transition-colors">
+        <Link to="/" className="flex items-center gap-2 text-xl font-bold hover:text-emerald-200 transition-colors">
+          <img src="/logo.svg" alt="" className="w-8 h-8" />
           {t('app.title')}
         </Link>
         <div className="flex items-center gap-3 flex-wrap">
