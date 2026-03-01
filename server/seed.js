@@ -31,9 +31,19 @@ const seedDB = async () => {
     });
     console.log('Default location created:', location.name);
 
-    // Create default settings for this location
+    // Create second location
+    const location2 = await Location.create({
+      name: 'Community Branch',
+      address: '',
+      phone: '',
+      description: 'Community branch of Arabic Youth Library',
+    });
+    console.log('Second location created:', location2.name);
+
+    // Create default settings for both locations
     await Settings.create({ location: location._id });
-    console.log('Default settings created for location');
+    await Settings.create({ location: location2._id });
+    console.log('Default settings created for both locations');
 
     // Create super admin
     await Admin.create({
@@ -43,6 +53,17 @@ const seedDB = async () => {
       location: null,
     });
     console.log('Super admin created: username=admin, password=admin123');
+
+    // Create location admin for second location
+    await Admin.create({
+      username: 'locadmin',
+      password: 'admin123',
+      role: 'location_admin',
+      location: location2._id,
+      fullName: 'Location Admin',
+      email: 'locadmin@library.com',
+    });
+    console.log('Location admin created: username=locadmin, password=admin123 (Community Branch)');
 
     // Create categories
     const categoryNames = ['Stories', 'Adventure', 'Educational', 'Islamic', 'Science', 'History'];
@@ -63,8 +84,18 @@ const seedDB = async () => {
       { title: 'كنوز المعرفة', description: 'موسوعة علمية مبسطة للشباب', category: categories[4]._id, status: 'available', location: location._id },
     ];
 
-    await Book.insertMany(sampleBooks);
-    console.log(`Created ${sampleBooks.length} sample books`);
+    // Books for second location
+    const sampleBooks2 = [
+      { title: 'رحلة ابن بطوطة', description: 'مغامرات ابن بطوطة حول العالم للناشئة', category: categories[1]._id, status: 'available', location: location2._id },
+      { title: 'الحروف المرحة', description: 'كتاب تعليمي ممتع لتعلم الحروف العربية', category: categories[2]._id, status: 'available', location: location2._id },
+      { title: 'قصص من القرآن', description: 'قصص قرآنية بأسلوب مبسط للأطفال', category: categories[3]._id, status: 'available', location: location2._id },
+      { title: 'أسرار البحار', description: 'اكتشف عجائب عالم البحار والمحيطات', category: categories[4]._id, status: 'available', location: location2._id },
+      { title: 'حكايات جدتي', description: 'قصص تراثية من التراث العربي القديم', category: categories[0]._id, status: 'available', location: location2._id },
+      { title: 'صلاح الدين الأيوبي', description: 'قصة البطل صلاح الدين وتحرير القدس', category: categories[5]._id, status: 'available', location: location2._id },
+    ];
+
+    await Book.insertMany([...sampleBooks, ...sampleBooks2]);
+    console.log(`Created ${sampleBooks.length + sampleBooks2.length} sample books (${sampleBooks.length} Main Library + ${sampleBooks2.length} Community Branch)`);
 
     // Seed About page
     await PageContent.create({
