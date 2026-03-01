@@ -134,6 +134,7 @@ export default function ManageAdmins() {
         <button
           onClick={() => { resetForm(); setShowForm(!showForm); }}
           className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
+          aria-expanded={showForm}
         >
           {showForm ? <HiOutlineXMark className="w-5 h-5" /> : <HiOutlinePlus className="w-5 h-5" />}
           {showForm ? t('admin.cancel') : t('admin.addAdmin')}
@@ -147,10 +148,11 @@ export default function ManageAdmins() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="adm-username" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.adminUsername')}
               </label>
               <input
+                id="adm-username"
                 type="text"
                 required
                 value={form.username}
@@ -159,11 +161,12 @@ export default function ManageAdmins() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="adm-password" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.adminPassword')}
                 {editing && <span className="text-gray-400 ms-1">({t('admin.passwordOptional')})</span>}
               </label>
               <input
+                id="adm-password"
                 type="password"
                 required={!editing}
                 value={form.password}
@@ -173,10 +176,11 @@ export default function ManageAdmins() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="adm-fullname" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.adminFullName')}
               </label>
               <input
+                id="adm-fullname"
                 type="text"
                 value={form.fullName}
                 onChange={(e) => setForm({ ...form, fullName: e.target.value })}
@@ -184,10 +188,11 @@ export default function ManageAdmins() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="adm-email" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.adminEmail')}
               </label>
               <input
+                id="adm-email"
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -195,10 +200,11 @@ export default function ManageAdmins() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="adm-phone" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.adminPhone')}
               </label>
               <input
+                id="adm-phone"
                 type="text"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -206,10 +212,11 @@ export default function ManageAdmins() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="adm-role" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.adminRole')}
               </label>
               <select
+                id="adm-role"
                 value={form.role}
                 onChange={(e) => setForm({ ...form, role: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -220,10 +227,11 @@ export default function ManageAdmins() {
             </div>
             {form.role === 'location_admin' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="adm-location" className="block text-sm font-medium text-gray-700 mb-1">
                   {t('admin.adminLocation')}
                 </label>
                 <select
+                  id="adm-location"
                   required
                   value={form.location}
                   onChange={(e) => setForm({ ...form, location: e.target.value })}
@@ -258,12 +266,14 @@ export default function ManageAdmins() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full ps-9 pe-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            aria-label={t('admin.searchAdmins')}
           />
         </div>
         <select
           value={filterRole}
           onChange={(e) => setFilterRole(e.target.value)}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          aria-label={t('admin.adminRole')}
         >
           <option value="">{t('admin.adminRole')}</option>
           <option value="super_admin">{t('admin.roleSuperAdmin')}</option>
@@ -273,6 +283,7 @@ export default function ManageAdmins() {
           value={filterLocation}
           onChange={(e) => setFilterLocation(e.target.value)}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          aria-label={t('books.allLocations')}
         >
           <option value="">{t('books.allLocations')}</option>
           {locations.map((loc) => (
@@ -283,6 +294,7 @@ export default function ManageAdmins() {
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          aria-label={t('admin.adminStatus')}
         >
           <option value="">{t('admin.adminStatus')}</option>
           <option value="true">{t('admin.active')}</option>

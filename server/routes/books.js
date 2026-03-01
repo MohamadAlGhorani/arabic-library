@@ -1,5 +1,6 @@
 const express = require('express');
 const Book = require('../models/Book');
+const Reservation = require('../models/Reservation');
 const auth = require('../middleware/auth');
 const { resolveLocation } = require('../middleware/roles');
 const upload = require('../middleware/upload');
@@ -30,7 +31,36 @@ router.get('/', async (req, res) => {
     const books = await Book.find(filter)
       .populate('category', 'name')
       .populate('location', 'name')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // Attach returnDate for borrowed books and pickup date for reserved books
+    const unavailableBookIds = books
+      .filter((b) => b.status === 'borrowed' || b.status === 'reserved')
+      .map((b) => b._id);
+
+    if (unavailableBookIds.length > 0) {
+      const activeReservations = await Reservation.find({
+        bookId: { $in: unavailableBookIds },
+        status: { $in: ['collected', 'pending'] },
+      }).select('bookId returnDate date').lean();
+
+      const reservationMap = {};
+      for (const r of activeReservations) {
+        reservationMap[r.bookId.toString()] = r;
+      }
+
+      for (const book of books) {
+        const r = reservationMap[book._id.toString()];
+        if (r) {
+          if (book.status === 'borrowed' && r.returnDate) {
+            book.returnDate = r.returnDate;
+          } else if (book.status === 'reserved' && r.date) {
+            book.pickupDate = r.date;
+          }
+        }
+      }
+    }
 
     res.json(books);
   } catch (error) {

@@ -20,7 +20,7 @@ function ProtectedRoute() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-56px)]">
+      <div className="flex items-center justify-center min-h-[calc(100vh-56px)]" role="status" aria-label="Loading">
         <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -56,6 +56,7 @@ export default function App() {
     <BrowserRouter>
       <div className="min-h-screen bg-gray-50">
         <Navbar />
+        <main id="main-content">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/reserve/:id" element={<Reserve />} />
@@ -72,6 +73,7 @@ export default function App() {
             </Route>
           </Route>
         </Routes>
+        </main>
       </div>
     </BrowserRouter>
   );

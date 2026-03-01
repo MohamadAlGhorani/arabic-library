@@ -89,6 +89,7 @@ export default function ManageLocations() {
         <button
           onClick={() => { resetForm(); setShowForm(!showForm); }}
           className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
+          aria-expanded={showForm}
         >
           {showForm ? <HiOutlineXMark className="w-5 h-5" /> : <HiOutlinePlus className="w-5 h-5" />}
           {showForm ? t('admin.cancel') : t('admin.addLocation')}
@@ -102,10 +103,11 @@ export default function ManageLocations() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="loc-name" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.locationName')}
               </label>
               <input
+                id="loc-name"
                 type="text"
                 required
                 value={form.name}
@@ -114,10 +116,11 @@ export default function ManageLocations() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="loc-phone" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.locationPhone')}
               </label>
               <input
+                id="loc-phone"
                 type="text"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -125,10 +128,11 @@ export default function ManageLocations() {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="loc-address" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.locationAddress')}
               </label>
               <input
+                id="loc-address"
                 type="text"
                 value={form.address}
                 onChange={(e) => setForm({ ...form, address: e.target.value })}
@@ -136,10 +140,11 @@ export default function ManageLocations() {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="loc-description" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.locationDescription')}
               </label>
               <textarea
+                id="loc-description"
                 rows={2}
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -147,10 +152,11 @@ export default function ManageLocations() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="loc-image" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.locationImage')}
               </label>
               <input
+                id="loc-image"
                 type="file"
                 accept="image/*"
                 onChange={(e) => setImageFile(e.target.files[0])}

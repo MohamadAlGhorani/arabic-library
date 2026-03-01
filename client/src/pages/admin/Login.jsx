@@ -40,33 +40,37 @@ export default function Login() {
         </h1>
 
         {error && (
-          <div className="bg-red-50 text-red-700 px-4 py-2 rounded-lg mb-4 text-center">
+          <div className="bg-red-50 text-red-700 px-4 py-2 rounded-lg mb-4 text-center" role="alert">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="login-username" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
               <HiOutlineUser className="w-4 h-4" />
               {t('admin.username')}
             </label>
             <input
+              id="login-username"
               type="text"
               required
+              autoComplete="username"
               value={form.username}
               onChange={(e) => setForm({ ...form, username: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <div>
-            <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="login-password" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
               <HiOutlineLockClosed className="w-4 h-4" />
               {t('admin.password')}
             </label>
             <input
+              id="login-password"
               type="password"
               required
+              autoComplete="current-password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"

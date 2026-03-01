@@ -31,8 +31,8 @@ export default function AdminSidebar() {
   }
 
   return (
-    <aside className="w-56 bg-gray-800 text-white min-h-[calc(100vh-56px)] p-4 shrink-0">
-      <nav className="flex flex-col gap-1">
+    <aside className="w-56 bg-gray-800 text-white min-h-[calc(100vh-56px)] p-4 shrink-0" aria-label="Sidebar">
+      <nav className="flex flex-col gap-1" aria-label="Admin navigation">
         {links.map((link) => {
           const Icon = link.icon;
           return (

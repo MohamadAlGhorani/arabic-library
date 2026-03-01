@@ -14,7 +14,8 @@
     "reservations": "Reserveringen",
     "settings": "Instellingen",
     "locations": "Locaties",
-    "admins": "Beheerders"
+    "admins": "Beheerders",
+    "language": "Taal selecteren"
   },
   "books": {
     "title": "Boeken Bekijken",
@@ -26,7 +27,11 @@
     "borrowed": "Uitgeleend",
     "reserve": "Reserveren",
     "noBooks": "Geen boeken gevonden",
-    "allLocations": "Alle Locaties"
+    "allLocations": "Alle Locaties",
+    "availableFrom": "Beschikbaar vanaf",
+    "pickupOn": "Ophalen op",
+    "bookDetails": "Boekdetails",
+    "close": "Sluiten"
   },
   "reservation": {
     "title": "Boek Reserveren",

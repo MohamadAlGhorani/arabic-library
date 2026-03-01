@@ -50,12 +50,14 @@ export default function Home() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full ps-10 pe-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            aria-label={t('books.searchPlaceholder')}
           />
         </div>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          aria-label={t('books.allCategories')}
         >
           <option value="">{t('books.allCategories')}</option>
           {categories.map((cat) => (
@@ -69,6 +71,7 @@ export default function Home() {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            aria-label={t('books.allLocations')}
           >
             <option value="">{t('books.allLocations')}</option>
             {locations.map((loc) => (
@@ -82,6 +85,7 @@ export default function Home() {
           value={status}
           onChange={(e) => setStatus(e.target.value)}
           className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          aria-label={t('books.allStatuses')}
         >
           <option value="">{t('books.allStatuses')}</option>
           <option value="available">{t('books.available')}</option>
@@ -92,9 +96,9 @@ export default function Home() {
 
       {/* Books Grid */}
       {loading ? (
-        <div className="text-center py-12 text-gray-500">Loading...</div>
+        <div className="text-center py-12 text-gray-500" role="status" aria-live="polite">Loading...</div>
       ) : books.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">{t('books.noBooks')}</div>
+        <div className="text-center py-12 text-gray-500" role="status" aria-live="polite">{t('books.noBooks')}</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {books.map((book) => (

@@ -104,6 +104,7 @@ export default function ManageBooks() {
         <button
           onClick={() => { resetForm(); setShowForm(!showForm); }}
           className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
+          aria-expanded={showForm}
         >
           {showForm ? <HiOutlineXMark className="w-5 h-5" /> : <HiOutlinePlus className="w-5 h-5" />}
           {showForm ? t('admin.cancel') : t('admin.addBook')}
@@ -117,10 +118,11 @@ export default function ManageBooks() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="book-title" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.bookTitle')}
               </label>
               <input
+                id="book-title"
                 type="text"
                 required
                 value={form.title}
@@ -129,10 +131,11 @@ export default function ManageBooks() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="book-category" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.bookCategory')}
               </label>
               <select
+                id="book-category"
                 required
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
@@ -146,10 +149,11 @@ export default function ManageBooks() {
             </div>
             {isSuperAdmin && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="book-location" className="block text-sm font-medium text-gray-700 mb-1">
                   {t('admin.locationCol')}
                 </label>
                 <select
+                  id="book-location"
                   required
                   value={form.location}
                   onChange={(e) => setForm({ ...form, location: e.target.value })}
@@ -163,10 +167,11 @@ export default function ManageBooks() {
               </div>
             )}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="book-description" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.bookDescription')}
               </label>
               <textarea
+                id="book-description"
                 required
                 rows={3}
                 value={form.description}
@@ -175,10 +180,11 @@ export default function ManageBooks() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="book-image" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.bookImage')}
               </label>
               <input
+                id="book-image"
                 type="file"
                 accept="image/*"
                 onChange={(e) => setImageFile(e.target.files[0])}
@@ -186,10 +192,11 @@ export default function ManageBooks() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="book-status" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('admin.bookStatus')}
               </label>
               <select
+                id="book-status"
                 value={form.status}
                 onChange={(e) => setForm({ ...form, status: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"

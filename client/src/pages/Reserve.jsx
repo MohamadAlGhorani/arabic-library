@@ -68,7 +68,7 @@ export default function Reserve() {
   if (success) {
     return (
       <div className="max-w-lg mx-auto px-4 py-16 text-center">
-        <div className="bg-green-50 border border-green-200 rounded-xl p-8">
+        <div className="bg-green-50 border border-green-200 rounded-xl p-8" role="alert">
           <HiOutlineCheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
           <p className="text-green-800 text-lg font-medium">{t('reservation.success')}</p>
           <Link
@@ -121,7 +121,7 @@ export default function Reserve() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 bg-red-50 text-red-700 px-4 py-2 rounded-lg mb-4">
+        <div className="flex items-center gap-2 bg-red-50 text-red-700 px-4 py-2 rounded-lg mb-4" role="alert">
           <HiOutlineExclamationCircle className="w-5 h-5 shrink-0" />
           {error}
         </div>
@@ -129,11 +129,12 @@ export default function Reserve() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="reserve-name" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
             <HiOutlineUser className="w-4 h-4" />
             {t('reservation.name')}
           </label>
           <input
+            id="reserve-name"
             type="text"
             required
             value={form.name}
@@ -143,11 +144,12 @@ export default function Reserve() {
           />
         </div>
         <div>
-          <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="reserve-email" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
             <HiOutlineEnvelope className="w-4 h-4" />
             {t('reservation.email')} *
           </label>
           <input
+            id="reserve-email"
             type="email"
             required
             value={form.email}
@@ -157,11 +159,12 @@ export default function Reserve() {
           />
         </div>
         <div>
-          <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="reserve-phone" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
             <HiOutlinePhone className="w-4 h-4" />
             {t('reservation.phone')}
           </label>
           <input
+            id="reserve-phone"
             type="tel"
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -193,11 +196,12 @@ export default function Reserve() {
           )}
         </div>
         <div>
-          <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="reserve-time" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
             <HiOutlineClock className="w-4 h-4" />
             {t('reservation.time')}
           </label>
           <select
+            id="reserve-time"
             required
             value={form.time}
             onChange={(e) => setForm({ ...form, time: e.target.value })}

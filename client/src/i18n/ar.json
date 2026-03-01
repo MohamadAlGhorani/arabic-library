@@ -14,7 +14,8 @@
     "reservations": "الحجوزات",
     "settings": "الإعدادات",
     "locations": "الفروع",
-    "admins": "المستخدمين"
+    "admins": "المستخدمين",
+    "language": "اختر اللغة"
   },
   "books": {
     "title": "تصفح الكتب",
@@ -26,7 +27,11 @@
     "borrowed": "مُستعار",
     "reserve": "احجز",
     "noBooks": "لا توجد كتب",
-    "allLocations": "جميع الفروع"
+    "allLocations": "جميع الفروع",
+    "availableFrom": "متاح من",
+    "pickupOn": "موعد الاستلام",
+    "bookDetails": "تفاصيل الكتاب",
+    "close": "إغلاق"
   },
   "reservation": {
     "title": "حجز كتاب",

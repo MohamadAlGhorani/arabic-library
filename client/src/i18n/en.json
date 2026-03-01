@@ -14,7 +14,8 @@
     "reservations": "Reservations",
     "settings": "Settings",
     "locations": "Locations",
-    "admins": "Admin Users"
+    "admins": "Admin Users",
+    "language": "Select language"
   },
   "books": {
     "title": "Browse Books",
@@ -26,7 +27,11 @@
     "borrowed": "Borrowed",
     "reserve": "Reserve",
     "noBooks": "No books found",
-    "allLocations": "All Locations"
+    "allLocations": "All Locations",
+    "availableFrom": "Available from",
+    "pickupOn": "Pickup on",
+    "bookDetails": "Book Details",
+    "close": "Close"
   },
   "reservation": {
     "title": "Reserve Book",

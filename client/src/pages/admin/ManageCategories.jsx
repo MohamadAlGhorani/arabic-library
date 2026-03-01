@@ -67,11 +67,13 @@ export default function ManageCategories() {
         )}
         <div className="flex gap-3">
           <input
+            id="category-name"
             type="text"
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder={t('admin.categoryName')}
+            aria-label={t('admin.categoryName')}
             className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
           <button

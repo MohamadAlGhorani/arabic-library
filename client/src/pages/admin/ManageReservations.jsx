@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   HiOutlineClock,
@@ -163,6 +163,21 @@ export default function ManageReservations() {
     }
   };
 
+  // Escape key to close modals
+  const handleEscapeKey = useCallback((e) => {
+    if (e.key === 'Escape') {
+      if (collectModal) setCollectModal(null);
+      if (extendModal) setExtendModal(null);
+    }
+  }, [collectModal, extendModal]);
+
+  useEffect(() => {
+    if (collectModal || extendModal) {
+      document.addEventListener('keydown', handleEscapeKey);
+      return () => document.removeEventListener('keydown', handleEscapeKey);
+    }
+  }, [collectModal, extendModal, handleEscapeKey]);
+
   const tomorrowStr = (() => {
     const d = new Date();
     d.setDate(d.getDate() + 1);
@@ -283,11 +298,11 @@ export default function ManageReservations() {
 
       {/* Collect Modal — Set Return Date */}
       {collectModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 cursor-pointer" onClick={() => setCollectModal(null)}>
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 cursor-default" role="dialog" aria-modal="true" aria-labelledby="collect-modal-title" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">{t('admin.setReturnDate')}</h3>
-              <button onClick={() => setCollectModal(null)} className="text-gray-400 hover:text-gray-600">
+              <h3 id="collect-modal-title" className="text-lg font-semibold text-gray-800">{t('admin.setReturnDate')}</h3>
+              <button onClick={() => setCollectModal(null)} className="text-gray-400 hover:text-gray-600 cursor-pointer" aria-label={t('books.close')}>
                 <HiOutlineXMark className="w-5 h-5" />
               </button>
             </div>
@@ -296,7 +311,7 @@ export default function ManageReservations() {
             <div className="flex gap-2 mb-4">
               <button
                 onClick={() => setCollectMode('week')}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                   collectMode === 'week'
                     ? 'bg-emerald-600 text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -306,7 +321,7 @@ export default function ManageReservations() {
               </button>
               <button
                 onClick={() => setCollectMode('specific')}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                   collectMode === 'specific'
                     ? 'bg-emerald-600 text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -324,7 +339,7 @@ export default function ManageReservations() {
                     <button
                       key={day}
                       onClick={() => setCollectWeekday(day)}
-                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                         collectWeekday === day
                           ? 'bg-emerald-600 text-white'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -371,11 +386,11 @@ export default function ManageReservations() {
 
       {/* Extend Modal */}
       {extendModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 cursor-pointer" onClick={() => setExtendModal(null)}>
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 cursor-default" role="dialog" aria-modal="true" aria-labelledby="extend-modal-title" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">{t('admin.extendReturn')}</h3>
-              <button onClick={() => setExtendModal(null)} className="text-gray-400 hover:text-gray-600">
+              <h3 id="extend-modal-title" className="text-lg font-semibold text-gray-800">{t('admin.extendReturn')}</h3>
+              <button onClick={() => setExtendModal(null)} className="text-gray-400 hover:text-gray-600 cursor-pointer" aria-label={t('books.close')}>
                 <HiOutlineXMark className="w-5 h-5" />
               </button>
             </div>
@@ -388,7 +403,7 @@ export default function ManageReservations() {
             <div className="flex gap-2 mb-4">
               <button
                 onClick={() => setExtendMode('week')}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                   extendMode === 'week'
                     ? 'bg-emerald-600 text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -398,7 +413,7 @@ export default function ManageReservations() {
               </button>
               <button
                 onClick={() => setExtendMode('specific')}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                   extendMode === 'specific'
                     ? 'bg-emerald-600 text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -416,7 +431,7 @@ export default function ManageReservations() {
                     <button
                       key={day}
                       onClick={() => setExtendWeekday(day)}
-                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                         extendWeekday === day
                           ? 'bg-emerald-600 text-white'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'

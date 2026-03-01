@@ -15,7 +15,13 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-emerald-700 text-white shadow-lg">
+    <nav className="bg-emerald-700 text-white shadow-lg" aria-label="Main navigation">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:start-2 focus:z-50 focus:bg-white focus:text-emerald-700 focus:px-4 focus:py-2 focus:rounded-lg focus:font-semibold"
+      >
+        Skip to content
+      </a>
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-2">
         <Link to="/" className="flex items-center gap-2 text-xl font-bold hover:text-emerald-200 transition-colors">
           <img src="/logo.svg" alt="" className="w-8 h-8" />

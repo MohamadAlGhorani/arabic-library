@@ -89,6 +89,7 @@ export default function ManageSettings() {
             value={selectedLocation}
             onChange={(e) => setSelectedLocation(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            aria-label={t('admin.selectLocation')}
           >
             {locations.map((loc) => (
               <option key={loc._id} value={loc._id}>{loc.name}</option>
@@ -108,7 +109,7 @@ export default function ManageSettings() {
             <button
               key={day}
               onClick={() => toggleDay(day)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                 openDays.includes(day)
                   ? 'bg-emerald-600 text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -137,7 +138,7 @@ export default function ManageSettings() {
               <span>{slot}</span>
               <button
                 onClick={() => removeSlot(slot)}
-                className="text-emerald-600 hover:text-red-600 transition-colors"
+                className="text-emerald-600 hover:text-red-600 transition-colors cursor-pointer"
               >
                 <HiOutlineXMark className="w-4 h-4" />
               </button>
@@ -150,15 +151,17 @@ export default function ManageSettings() {
 
         {/* Add new slot */}
         <div className="flex items-center gap-3 flex-wrap">
-          <label className="text-sm text-gray-600">{t('settings.from')}</label>
+          <label htmlFor="slot-from" className="text-sm text-gray-600">{t('settings.from')}</label>
           <input
+            id="slot-from"
             type="time"
             value={newSlot.from}
             onChange={(e) => setNewSlot({ ...newSlot, from: e.target.value })}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
-          <label className="text-sm text-gray-600">{t('settings.to')}</label>
+          <label htmlFor="slot-to" className="text-sm text-gray-600">{t('settings.to')}</label>
           <input
+            id="slot-to"
             type="time"
             value={newSlot.to}
             onChange={(e) => setNewSlot({ ...newSlot, to: e.target.value })}
