@@ -32,7 +32,9 @@
     "availableFrom": "متاح من",
     "pickupOn": "موعد الاستلام",
     "bookDetails": "تفاصيل الكتاب",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "filters": "التصفية",
+    "clearFilters": "مسح التصفية"
   },
   "reservation": {
     "title": "حجز كتاب",

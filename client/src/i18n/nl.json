@@ -32,7 +32,9 @@
     "availableFrom": "Beschikbaar vanaf",
     "pickupOn": "Ophalen op",
     "bookDetails": "Boekdetails",
-    "close": "Sluiten"
+    "close": "Sluiten",
+    "filters": "Filters",
+    "clearFilters": "Filters Wissen"
   },
   "reservation": {
     "title": "Boek Reserveren",

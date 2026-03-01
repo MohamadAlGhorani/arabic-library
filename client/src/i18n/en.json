@@ -32,7 +32,9 @@
     "availableFrom": "Available from",
     "pickupOn": "Pickup on",
     "bookDetails": "Book Details",
-    "close": "Close"
+    "close": "Close",
+    "filters": "Filters",
+    "clearFilters": "Clear Filters"
   },
   "reservation": {
     "title": "Reserve Book",
