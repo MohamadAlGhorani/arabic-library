@@ -4,8 +4,6 @@ const Reservation = require('../models/Reservation');
 const auth = require('../middleware/auth');
 const { resolveLocation } = require('../middleware/roles');
 const upload = require('../middleware/upload');
-const fs = require('fs');
-const path = require('path');
 const { logAction } = require('../services/auditLog');
 
 const router = express.Router();
@@ -107,7 +105,7 @@ router.post('/', auth, resolveLocation, upload.single('image'), async (req, res)
     };
 
     if (req.file) {
-      bookData.image = `/uploads/${req.file.filename}`;
+      bookData.image = upload.toDataUri(req.file);
     }
 
     const book = await Book.create(bookData);
@@ -256,14 +254,7 @@ router.put('/:id', auth, resolveLocation, upload.single('image'), async (req, re
     if (status) book.status = status;
 
     if (req.file) {
-      // Remove old image if exists
-      if (book.image) {
-        const oldPath = path.join(__dirname, '..', book.image);
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath);
-        }
-      }
-      book.image = `/uploads/${req.file.filename}`;
+      book.image = upload.toDataUri(req.file);
     }
 
     await book.save();
@@ -296,14 +287,6 @@ router.delete('/:id', auth, resolveLocation, async (req, res) => {
     // Location admin can only delete books in their location
     if (req.adminRole !== 'super_admin' && book.location.toString() !== req.effectiveLocationId) {
       return res.status(403).json({ message: 'Not authorized for this location' });
-    }
-
-    // Remove image file
-    if (book.image) {
-      const imgPath = path.join(__dirname, '..', book.image);
-      if (fs.existsSync(imgPath)) {
-        fs.unlinkSync(imgPath);
-      }
     }
 
     const bookTitle = book.title;

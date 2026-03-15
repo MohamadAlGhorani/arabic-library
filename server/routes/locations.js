@@ -1,6 +1,4 @@
 const express = require('express');
-const fs = require('fs');
-const path = require('path');
 const Location = require('../models/Location');
 const Book = require('../models/Book');
 const Settings = require('../models/Settings');
@@ -40,7 +38,7 @@ router.post('/', auth, requireSuperAdmin, upload.single('image'), async (req, re
     };
 
     if (req.file) {
-      locationData.image = `/uploads/${req.file.filename}`;
+      locationData.image = upload.toDataUri(req.file);
     }
 
     const location = await Location.create(locationData);
@@ -79,12 +77,7 @@ router.put('/:id', auth, requireSuperAdmin, upload.single('image'), async (req, 
     if (lng !== undefined) location.lng = lng !== '' ? parseFloat(lng) : null;
 
     if (req.file) {
-      // Remove old image
-      if (location.image) {
-        const oldPath = path.join(__dirname, '..', location.image);
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-      }
-      location.image = `/uploads/${req.file.filename}`;
+      location.image = upload.toDataUri(req.file);
     }
 
     await location.save();
@@ -115,12 +108,6 @@ router.delete('/:id', auth, requireSuperAdmin, async (req, res) => {
       return res.status(400).json({
         message: `Cannot delete: ${booksCount} book(s) belong to this location`,
       });
-    }
-
-    // Remove location image
-    if (location.image) {
-      const imgPath = path.join(__dirname, '..', location.image);
-      if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
     }
 
     // Delete location settings
