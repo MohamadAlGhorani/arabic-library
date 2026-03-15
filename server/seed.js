@@ -10,6 +10,18 @@ const PageContent = require('./models/PageContent');
 
 const seedDB = async () => {
   try {
+    // Safety: refuse to seed production database
+    if (process.env.NODE_ENV === 'production') {
+      console.error('\n❌ SEED BLOCKED: Cannot seed in production environment!');
+      console.error('   Set NODE_ENV=development to run seed.\n');
+      process.exit(1);
+    }
+
+    const dbName = process.env.MONGO_URI.split('/').pop().split('?')[0];
+    console.log(`\n⚠️  Seeding database: ${dbName}`);
+    console.log(`   Environment: ${process.env.NODE_ENV || 'not set'}`);
+    console.log('   This will DELETE all existing data!\n');
+
     await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDB');
 
