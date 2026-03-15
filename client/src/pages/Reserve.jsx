@@ -7,7 +7,7 @@ import { ar as arLocale } from 'date-fns/locale/ar';
 import { nl as nlLocale } from 'date-fns/locale/nl';
 import { enUS as enLocale } from 'date-fns/locale/en-US';
 import 'react-day-picker/style.css';
-import { HiOutlineUser, HiOutlineEnvelope, HiOutlinePhone, HiOutlineCalendarDays, HiOutlineClock, HiOutlineCheckCircle, HiOutlineExclamationCircle, HiOutlineBuildingStorefront } from 'react-icons/hi2';
+import { HiOutlineUser, HiOutlineEnvelope, HiOutlinePhone, HiOutlineCalendarDays, HiOutlineClock, HiOutlineCheckCircle, HiOutlineExclamationCircle, HiOutlineExclamationTriangle, HiOutlineBuildingStorefront } from 'react-icons/hi2';
 import { getBook, createReservation, getSettings } from '../services/api';
 
 const localeMap = { ar: arLocale, nl: nlLocale, en: enLocale };
@@ -21,6 +21,8 @@ export default function Reserve() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', time: '' });
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [confirmationCode, setConfirmationCode] = useState('');
+  const [overdueWarning, setOverdueWarning] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -52,7 +54,13 @@ export default function Reserve() {
 
     try {
       const dateStr = format(selectedDate, 'yyyy-MM-dd');
-      await createReservation({ bookId: id, name: form.name, email: form.email, phone: form.phone, date: dateStr, time: form.time });
+      const res = await createReservation({ bookId: id, name: form.name, email: form.email, phone: form.phone, date: dateStr, time: form.time });
+      if (res.data.warning) {
+        setOverdueWarning(res.data.warning);
+      }
+      if (res.data.reservation?.confirmationCode) {
+        setConfirmationCode(res.data.reservation.confirmationCode);
+      }
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong');
@@ -62,15 +70,28 @@ export default function Reserve() {
   };
 
   if (!book || (!settings && !error)) {
-    return <div className="text-center py-12 text-gray-500">Loading...</div>;
+    return <div className="text-center py-12 text-gray-500 dark:text-gray-400">Loading...</div>;
   }
 
   if (success) {
     return (
       <div className="max-w-lg mx-auto px-4 py-16 text-center">
-        <div className="bg-green-50 border border-green-200 rounded-xl p-8" role="alert">
-          <HiOutlineCheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-          <p className="text-green-800 text-lg font-medium">{t('reservation.success')}</p>
+        {overdueWarning && (
+          <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 px-4 py-3 rounded-xl mb-4" role="alert">
+            <HiOutlineExclamationTriangle className="w-6 h-6 shrink-0" />
+            <p className="text-sm font-medium">{t('reservation.overdueWarning')}</p>
+          </div>
+        )}
+        <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl p-8" role="alert">
+          <HiOutlineCheckCircle className="w-16 h-16 text-green-600 dark:text-green-400 mx-auto mb-4" />
+          <p className="text-green-800 dark:text-green-300 text-lg font-medium">{t('reservation.success')}</p>
+          {confirmationCode && (
+            <div className="mt-4 bg-white dark:bg-gray-800 border-2 border-emerald-500 rounded-xl p-5">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('reservation.confirmationCode')}</p>
+              <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 tracking-[0.3em] font-mono">{confirmationCode}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">{t('reservation.showCodeAtPickup')}</p>
+            </div>
+          )}
           <Link
             to="/"
             className="inline-block mt-6 bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
@@ -103,16 +124,16 @@ export default function Reserve() {
 
   return (
     <div className="max-w-lg mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-800 mb-2">{t('reservation.title')}</h1>
-      <div className="bg-emerald-50 rounded-lg p-3 mb-6 flex items-center gap-3">
+      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">{t('reservation.title')}</h1>
+      <div className="bg-emerald-50 dark:bg-emerald-900/30 rounded-lg p-3 mb-6 flex items-center gap-3">
         {book.image && (
           <img src={book.image} alt={book.title} className="w-12 h-16 object-cover rounded" />
         )}
         <div>
-          <p className="font-semibold text-gray-800">{book.title}</p>
-          <p className="text-sm text-gray-500">{book.category?.name}</p>
+          <p className="font-semibold text-gray-800 dark:text-gray-100">{book.title}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{book.category?.name}</p>
           {book.location?.name && (
-            <p className="text-xs text-blue-600 flex items-center gap-1 mt-0.5">
+            <p className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1 mt-0.5">
               <HiOutlineBuildingStorefront className="w-3 h-3" />
               {book.location.name}
             </p>
@@ -121,7 +142,7 @@ export default function Reserve() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 bg-red-50 text-red-700 px-4 py-2 rounded-lg mb-4" role="alert">
+        <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg mb-4" role="alert">
           <HiOutlineExclamationCircle className="w-5 h-5 shrink-0" />
           {error}
         </div>
@@ -129,7 +150,7 @@ export default function Reserve() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="reserve-name" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="reserve-name" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             <HiOutlineUser className="w-4 h-4" />
             {t('reservation.name')}
           </label>
@@ -140,11 +161,11 @@ export default function Reserve() {
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             placeholder={t('reservation.namePlaceholder')}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-gray-100"
           />
         </div>
         <div>
-          <label htmlFor="reserve-email" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="reserve-email" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             <HiOutlineEnvelope className="w-4 h-4" />
             {t('reservation.email')} *
           </label>
@@ -155,11 +176,11 @@ export default function Reserve() {
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             placeholder={t('reservation.emailPlaceholder')}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-gray-100"
           />
         </div>
         <div>
-          <label htmlFor="reserve-phone" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="reserve-phone" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             <HiOutlinePhone className="w-4 h-4" />
             {t('reservation.phone')}
           </label>
@@ -169,15 +190,15 @@ export default function Reserve() {
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
             placeholder={t('reservation.phonePlaceholder')}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-gray-100"
           />
         </div>
         <div>
-          <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+          <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             <HiOutlineCalendarDays className="w-4 h-4" />
             {t('reservation.date')}
           </label>
-          <div className="calendar-wrapper border border-gray-300 rounded-lg p-3 bg-white">
+          <div className="calendar-wrapper border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-white dark:bg-gray-700">
             <DayPicker
               mode="single"
               selected={selectedDate}
@@ -190,13 +211,13 @@ export default function Reserve() {
             />
           </div>
           {selectedDate && (
-            <p className="text-emerald-700 text-sm mt-2 font-medium">
+            <p className="text-emerald-700 dark:text-emerald-400 text-sm mt-2 font-medium">
               {format(selectedDate, 'EEEE, d MMMM yyyy', { locale: currentLocale })}
             </p>
           )}
         </div>
         <div>
-          <label htmlFor="reserve-time" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="reserve-time" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
             <HiOutlineClock className="w-4 h-4" />
             {t('reservation.time')}
           </label>
@@ -206,7 +227,7 @@ export default function Reserve() {
             value={form.time}
             onChange={(e) => setForm({ ...form, time: e.target.value })}
             disabled={!isDateValid}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100 disabled:text-gray-400"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-gray-100 disabled:bg-gray-100 dark:disabled:bg-gray-600 disabled:text-gray-400 dark:disabled:text-gray-500"
           >
             <option value="">{t('reservation.selectTime')}</option>
             {settings.timeSlots.map((slot) => (

@@ -2,6 +2,7 @@ const express = require('express');
 const Admin = require('../models/Admin');
 const auth = require('../middleware/auth');
 const { requireSuperAdmin } = require('../middleware/roles');
+const { logAction } = require('../services/auditLog');
 
 const router = express.Router();
 
@@ -73,6 +74,14 @@ router.post('/', auth, requireSuperAdmin, async (req, res) => {
       .populate('location', 'name');
 
     res.status(201).json(created);
+
+    logAction(req, {
+      action: 'create',
+      entityType: 'admin',
+      entityId: admin._id,
+      details: `Created admin "${username}" (${adminRole})`,
+      location: adminRole === 'super_admin' ? null : location,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -127,6 +136,14 @@ router.put('/:id', auth, requireSuperAdmin, async (req, res) => {
       .populate('location', 'name');
 
     res.json(updated);
+
+    logAction(req, {
+      action: 'update',
+      entityType: 'admin',
+      entityId: admin._id,
+      details: `Updated admin "${admin.username}"`,
+      location: admin.location,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -153,6 +170,14 @@ router.put('/:id/toggle', auth, requireSuperAdmin, async (req, res) => {
       .populate('location', 'name');
 
     res.json(updated);
+
+    logAction(req, {
+      action: 'toggle',
+      entityType: 'admin',
+      entityId: admin._id,
+      details: `${admin.isActive ? 'Activated' : 'Deactivated'} admin "${admin.username}"`,
+      location: admin.location,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -179,8 +204,18 @@ router.delete('/:id', auth, requireSuperAdmin, async (req, res) => {
       }
     }
 
+    const adminUsername = admin.username;
+    const adminLocation = admin.location;
     await Admin.findByIdAndDelete(req.params.id);
     res.json({ message: 'Admin deleted' });
+
+    logAction(req, {
+      action: 'delete',
+      entityType: 'admin',
+      entityId: admin._id,
+      details: `Deleted admin "${adminUsername}"`,
+      location: adminLocation,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

@@ -4,9 +4,14 @@ const Book = require('../models/Book');
 const auth = require('../middleware/auth');
 const { resolveLocation } = require('../middleware/roles');
 const Admin = require('../models/Admin');
+const { logAction } = require('../services/auditLog');
 const { sendPickupReminder, sendReturnReminder, sendReservationConfirmation, sendCollectionConfirmation, sendCancellationNotice, sendNewReservationNotification, sendAdminPickupNotification, sendAdminReturnNotification, sendReturnExtensionNotice, sendReturnConfirmation } = require('../services/email');
 
 const router = express.Router();
+
+function generateConfirmationCode() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
 // POST /api/reservations - public
 router.post('/', async (req, res) => {
@@ -32,6 +37,16 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Book is not available for reservation' });
     }
 
+    // Soft block: check if this email has overdue books
+    const todayStr = new Date().toISOString().split('T')[0];
+    const overdueBooks = await Reservation.find({
+      email: { $regex: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') },
+      status: 'collected',
+      returnDate: { $ne: '', $lt: todayStr },
+    }).populate({ path: 'bookId', select: 'title' });
+
+    const confirmationCode = generateConfirmationCode();
+
     const reservation = await Reservation.create({
       bookId,
       name,
@@ -40,6 +55,7 @@ router.post('/', async (req, res) => {
       date,
       time,
       location: book.location,
+      confirmationCode,
     });
 
     // Update book status to reserved
@@ -57,6 +73,7 @@ router.post('/', async (req, res) => {
       date,
       time,
       locationName,
+      confirmationCode,
     }).catch((err) => console.error('Failed to send confirmation email:', err.message));
 
     // Notify admins of the new reservation (non-blocking)
@@ -83,10 +100,17 @@ router.post('/', async (req, res) => {
       }
     }).catch((err) => console.error('Failed to query admins for notification:', err.message));
 
-    res.status(201).json({
+    const response = {
       message: 'Your reservation has been received. Please come at the selected time to collect your book.',
       reservation,
-    });
+    };
+
+    if (overdueBooks.length > 0) {
+      response.warning = `You have ${overdueBooks.length} overdue book(s). Please return them as soon as possible.`;
+      response.overdueCount = overdueBooks.length;
+    }
+
+    res.status(201).json(response);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -101,7 +125,11 @@ router.get('/', auth, resolveLocation, async (req, res) => {
       filter.location = req.effectiveLocationId;
     }
 
-    if (status) {
+    if (status === 'overdue') {
+      const todayStr = new Date().toISOString().split('T')[0];
+      filter.status = 'collected';
+      filter.returnDate = { $ne: '', $lt: todayStr };
+    } else if (status) {
       filter.status = status;
     }
 
@@ -204,6 +232,14 @@ router.put('/:id', auth, resolveLocation, async (req, res) => {
     });
 
     res.json(updated);
+
+    logAction(req, {
+      action: 'status_change',
+      entityType: 'reservation',
+      entityId: reservation._id,
+      details: `Changed reservation for "${updated?.bookId?.title || 'Unknown'}" to ${status}`,
+      location: reservation.location,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -258,6 +294,14 @@ router.put('/:id/extend', auth, resolveLocation, async (req, res) => {
     });
 
     res.json(updated);
+
+    logAction(req, {
+      action: 'update',
+      entityType: 'reservation',
+      entityId: reservation._id,
+      details: `Extended return date to ${returnDate} for "${updated?.bookId?.title || 'Unknown'}"`,
+      location: reservation.location,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

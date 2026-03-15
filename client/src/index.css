@@ -1,12 +1,27 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 [dir="rtl"] {
   font-family: 'Noto Sans Arabic', 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Dark mode: native date/time input icons */
+.dark input[type="date"],
+.dark input[type="time"],
+.dark input[type="datetime-local"] {
+  color-scheme: dark;
+}
+
+/* Dark mode: select chevron */
+.dark select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%239ca3af'%3E%3Cpath fill-rule='evenodd' d='M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z' clip-rule='evenodd'/%3E%3C/svg%3E") !important;
 }
 
 /* Custom select chevron - replaces native browser chevron */
@@ -213,3 +228,30 @@ select {
   border-color: #059669;
   font-weight: 700;
 }
+
+/* Dark mode: prose */
+.dark .prose h1 { color: #f3f4f6; }
+.dark .prose h2,
+.dark .prose h3 { color: #d1d5db; }
+.dark .prose p,
+.dark .prose li { color: #9ca3af; }
+.dark .prose strong { color: #f3f4f6; }
+.dark .prose blockquote { background-color: #1f2937; color: #d1d5db; border-color: #10b981; }
+
+/* Dark mode: calendar */
+.dark .calendar-wrapper .rdp-month_caption { color: #f3f4f6; }
+.dark .calendar-wrapper .rdp-button_previous,
+.dark .calendar-wrapper .rdp-button_next { color: #9ca3af; }
+.dark .calendar-wrapper .rdp-button_previous:hover,
+.dark .calendar-wrapper .rdp-button_next:hover { background-color: #374151; }
+.dark .calendar-wrapper .rdp-weekday { color: #9ca3af; }
+.dark .calendar-wrapper .rdp-day_button:hover:not(:disabled) { background-color: #064e3b; color: #d1fae5; }
+
+/* Dark mode: quill */
+.dark .quill-wrapper .ql-toolbar { background-color: #1f2937; border-color: #374151; }
+.dark .quill-wrapper .ql-container { background-color: #111827; border-color: #374151; color: #f3f4f6; }
+.dark .quill-wrapper .ql-editor { color: #f3f4f6; }
+.dark .quill-wrapper .ql-toolbar button .ql-stroke { stroke: #9ca3af; }
+.dark .quill-wrapper .ql-toolbar button .ql-fill { fill: #9ca3af; }
+.dark .quill-wrapper .ql-toolbar button:hover .ql-stroke { stroke: #f3f4f6; }
+.dark .quill-wrapper .ql-toolbar .ql-picker-label { color: #9ca3af; }

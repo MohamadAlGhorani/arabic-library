@@ -83,12 +83,12 @@ export default function ManageSettings() {
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <h1 className="text-2xl font-bold text-gray-800">{t('settings.title')}</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('settings.title')}</h1>
         {isSuperAdmin && locations.length > 0 && (
           <select
             value={selectedLocation}
             onChange={(e) => setSelectedLocation(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
             aria-label={t('admin.selectLocation')}
           >
             {locations.map((loc) => (
@@ -99,9 +99,9 @@ export default function ManageSettings() {
       </div>
 
       {/* Open Days */}
-      <div className="bg-white rounded-xl shadow p-5 mb-6">
-        <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800 mb-4">
-          <HiOutlineCalendarDays className="w-5 h-5 text-emerald-600" />
+      <div className="bg-white rounded-xl shadow p-5 mb-6 dark:bg-gray-800">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+          <HiOutlineCalendarDays className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
           {t('settings.openDays')}
         </h2>
         <div className="flex flex-wrap gap-2">
@@ -112,7 +112,7 @@ export default function ManageSettings() {
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                 openDays.includes(day)
                   ? 'bg-emerald-600 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
               }`}
             >
               {dayNames[day]}
@@ -122,9 +122,9 @@ export default function ManageSettings() {
       </div>
 
       {/* Time Slots */}
-      <div className="bg-white rounded-xl shadow p-5 mb-6">
-        <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800 mb-4">
-          <HiOutlineClock className="w-5 h-5 text-emerald-600" />
+      <div className="bg-white rounded-xl shadow p-5 mb-6 dark:bg-gray-800">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+          <HiOutlineClock className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
           {t('settings.timeSlots')}
         </h2>
 
@@ -133,39 +133,39 @@ export default function ManageSettings() {
           {timeSlots.map((slot) => (
             <div
               key={slot}
-              className="flex items-center gap-2 bg-emerald-50 text-emerald-800 px-3 py-1.5 rounded-lg text-sm"
+              className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 px-3 py-1.5 rounded-lg text-sm"
             >
               <span>{slot}</span>
               <button
                 onClick={() => removeSlot(slot)}
-                className="text-emerald-600 hover:text-red-600 transition-colors cursor-pointer"
+                className="text-emerald-600 hover:text-red-600 transition-colors cursor-pointer dark:text-emerald-400"
               >
                 <HiOutlineXMark className="w-4 h-4" />
               </button>
             </div>
           ))}
           {timeSlots.length === 0 && (
-            <p className="text-gray-400 text-sm">{t('settings.noSlots')}</p>
+            <p className="text-gray-400 dark:text-gray-500 text-sm">{t('settings.noSlots')}</p>
           )}
         </div>
 
         {/* Add new slot */}
         <div className="flex items-center gap-3 flex-wrap">
-          <label htmlFor="slot-from" className="text-sm text-gray-600">{t('settings.from')}</label>
+          <label htmlFor="slot-from" className="text-sm text-gray-600 dark:text-gray-300">{t('settings.from')}</label>
           <input
             id="slot-from"
             type="time"
             value={newSlot.from}
             onChange={(e) => setNewSlot({ ...newSlot, from: e.target.value })}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
           />
-          <label htmlFor="slot-to" className="text-sm text-gray-600">{t('settings.to')}</label>
+          <label htmlFor="slot-to" className="text-sm text-gray-600 dark:text-gray-300">{t('settings.to')}</label>
           <input
             id="slot-to"
             type="time"
             value={newSlot.to}
             onChange={(e) => setNewSlot({ ...newSlot, to: e.target.value })}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
           />
           <button
             onClick={addSlot}
@@ -188,7 +188,7 @@ export default function ManageSettings() {
           {saving ? t('admin.saving') : t('admin.save')}
         </button>
         {saved && (
-          <span className="text-green-600 text-sm font-medium">{t('settings.saved')}</span>
+          <span className="text-green-600 dark:text-green-400 text-sm font-medium">{t('settings.saved')}</span>
         )}
       </div>
     </div>

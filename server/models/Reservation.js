@@ -56,6 +56,14 @@ const reservationSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  overdueReminderCount: {
+    type: Number,
+    default: 0,
+  },
+  confirmationCode: {
+    type: String,
+    default: '',
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Reservation', reservationSchema);

@@ -88,21 +88,21 @@ export default function ManagePages() {
   if (!editingSlug) {
     return (
       <div className="p-4 md:p-6 max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">{t('pages.manageContent')}</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">{t('pages.manageContent')}</h1>
 
         <div className="grid gap-4 sm:grid-cols-2">
           {PAGES.map((page) => (
             <div
               key={page.slug}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex items-start justify-between"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-start justify-between"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-                  <HiOutlineDocumentText className="w-5 h-5 text-emerald-600" />
+                <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/40 rounded-lg flex items-center justify-center">
+                  <HiOutlineDocumentText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-800">{t(page.labelKey)}</h3>
-                  <p className="text-sm text-gray-500">/{page.slug}</p>
+                  <h3 className="font-semibold text-gray-800 dark:text-gray-100">{t(page.labelKey)}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">/{page.slug}</p>
                 </div>
               </div>
               <button
@@ -124,14 +124,14 @@ export default function ManagePages() {
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
       <button
         onClick={() => { setEditingSlug(null); setPageData(null); setSuccessMsg(''); }}
-        className="flex items-center gap-1.5 text-gray-600 hover:text-gray-800 mb-4 transition-colors cursor-pointer"
+        className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 mb-4 transition-colors cursor-pointer"
       >
         <HiOutlineArrowLeft className={`w-4 h-4 ${isRtl ? 'rotate-180' : ''}`} />
         {t('pages.back')}
       </button>
 
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
           {t('pages.editPage')} — {t(PAGES.find((p) => p.slug === editingSlug)?.labelKey || '')}
         </h1>
       </div>
@@ -141,17 +141,17 @@ export default function ManagePages() {
           <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : pageData ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           {/* Language tabs */}
-          <div className="flex gap-1 mb-6 border-b border-gray-200">
+          <div className="flex gap-1 mb-6 border-b border-gray-200 dark:border-gray-700">
             {LANGUAGES.map((lang) => (
               <button
                 key={lang.code}
                 onClick={() => setActiveLang(lang.code)}
                 className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
                   activeLang === lang.code
-                    ? 'border-emerald-600 text-emerald-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                 }`}
               >
                 {lang.label}
@@ -161,19 +161,19 @@ export default function ManagePages() {
 
           {/* Title input */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.title')}</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('pages.title')}</label>
             <input
               type="text"
               value={pageData[`title_${activeLang}`] || ''}
               onChange={(e) => updateField(`title_${activeLang}`, e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700"
               dir={activeLang === 'ar' ? 'rtl' : 'ltr'}
             />
           </div>
 
           {/* Rich text editor */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.content')}</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('pages.content')}</label>
             <div dir={activeLang === 'ar' ? 'rtl' : 'ltr'} className="quill-wrapper">
               <ReactQuill
                 key={`${editingSlug}-${activeLang}`}
@@ -200,7 +200,7 @@ export default function ManagePages() {
               {saving ? t('admin.saving') : t('admin.save')}
             </button>
             {successMsg && (
-              <span className="text-emerald-600 text-sm font-medium">{successMsg}</span>
+              <span className="text-emerald-600 dark:text-emerald-400 text-sm font-medium">{successMsg}</span>
             )}
           </div>
         </div>

@@ -15,7 +15,7 @@ export default function ManageLocations() {
   const [locations, setLocations] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ name: '', address: '', phone: '', description: '' });
+  const [form, setForm] = useState({ name: '', address: '', phone: '', description: '', lat: '', lng: '' });
   const [imageFile, setImageFile] = useState(null);
   const [saving, setSaving] = useState(false);
 
@@ -26,7 +26,7 @@ export default function ManageLocations() {
   }, []);
 
   const resetForm = () => {
-    setForm({ name: '', address: '', phone: '', description: '' });
+    setForm({ name: '', address: '', phone: '', description: '', lat: '', lng: '' });
     setImageFile(null);
     setEditing(null);
     setShowForm(false);
@@ -38,6 +38,8 @@ export default function ManageLocations() {
       address: loc.address || '',
       phone: loc.phone || '',
       description: loc.description || '',
+      lat: loc.lat != null ? String(loc.lat) : '',
+      lng: loc.lng != null ? String(loc.lng) : '',
     });
     setImageFile(null);
     setEditing(loc._id);
@@ -63,6 +65,8 @@ export default function ManageLocations() {
     formData.append('address', form.address);
     formData.append('phone', form.phone);
     formData.append('description', form.description);
+    formData.append('lat', form.lat !== '' ? form.lat : '');
+    formData.append('lng', form.lng !== '' ? form.lng : '');
     if (imageFile) {
       formData.append('image', imageFile);
     }
@@ -85,7 +89,7 @@ export default function ManageLocations() {
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">{t('admin.manageLocations')}</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('admin.manageLocations')}</h1>
         <button
           onClick={() => { resetForm(); setShowForm(!showForm); }}
           className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
@@ -97,13 +101,13 @@ export default function ManageLocations() {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-5 mb-6 space-y-4">
-          <h2 className="text-lg font-semibold">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl shadow p-5 mb-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
             {editing ? t('admin.editLocation') : t('admin.addLocation')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="loc-name" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="loc-name" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 {t('admin.locationName')}
               </label>
               <input
@@ -112,11 +116,11 @@ export default function ManageLocations() {
                 required
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
             </div>
             <div>
-              <label htmlFor="loc-phone" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="loc-phone" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 {t('admin.locationPhone')}
               </label>
               <input
@@ -124,11 +128,11 @@ export default function ManageLocations() {
                 type="text"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
             </div>
             <div className="md:col-span-2">
-              <label htmlFor="loc-address" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="loc-address" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 {t('admin.locationAddress')}
               </label>
               <input
@@ -136,11 +140,11 @@ export default function ManageLocations() {
                 type="text"
                 value={form.address}
                 onChange={(e) => setForm({ ...form, address: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
             </div>
             <div className="md:col-span-2">
-              <label htmlFor="loc-description" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="loc-description" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 {t('admin.locationDescription')}
               </label>
               <textarea
@@ -148,11 +152,38 @@ export default function ManageLocations() {
                 rows={2}
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
             </div>
             <div>
-              <label htmlFor="loc-image" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="loc-lat" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Latitude
+              </label>
+              <input
+                id="loc-lat"
+                type="number"
+                step="any"
+                value={form.lat}
+                onChange={(e) => setForm({ ...form, lat: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              />
+            </div>
+            <div>
+              <label htmlFor="loc-lng" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Longitude
+              </label>
+              <input
+                id="loc-lng"
+                type="number"
+                step="any"
+                value={form.lng}
+                onChange={(e) => setForm({ ...form, lng: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Right-click on Google Maps to copy coordinates</p>
+            </div>
+            <div>
+              <label htmlFor="loc-image" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 {t('admin.locationImage')}
               </label>
               <input
@@ -160,7 +191,7 @@ export default function ManageLocations() {
                 type="file"
                 accept="image/*"
                 onChange={(e) => setImageFile(e.target.files[0])}
-                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
+                className="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
               />
             </div>
           </div>
@@ -175,32 +206,32 @@ export default function ManageLocations() {
         </form>
       )}
 
-      <div className="bg-white rounded-xl shadow overflow-x-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50">
+          <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
-              <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.locationImage')}</th>
-              <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.locationName')}</th>
-              <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.locationAddress')}</th>
-              <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.locationPhone')}</th>
-              <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.actionsCol')}</th>
+              <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.locationImage')}</th>
+              <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.locationName')}</th>
+              <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.locationAddress')}</th>
+              <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.locationPhone')}</th>
+              <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.actionsCol')}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
             {locations.map((loc) => (
-              <tr key={loc._id} className="hover:bg-gray-50">
+              <tr key={loc._id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                 <td className="px-4 py-3">
                   {loc.image ? (
                     <img src={loc.image} alt="" className="w-10 h-10 object-cover rounded" />
                   ) : (
-                    <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center text-gray-400">
+                    <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-gray-400 dark:text-gray-500">
                       <HiOutlineBuildingStorefront className="w-5 h-5" />
                     </div>
                   )}
                 </td>
-                <td className="px-4 py-3 font-medium text-gray-800">{loc.name}</td>
-                <td className="px-4 py-3 text-gray-600">{loc.address || '-'}</td>
-                <td className="px-4 py-3 text-gray-600">{loc.phone || '-'}</td>
+                <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">{loc.name}</td>
+                <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{loc.address || '-'}</td>
+                <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{loc.phone || '-'}</td>
                 <td className="px-4 py-3">
                   <div className="flex gap-2">
                     <button

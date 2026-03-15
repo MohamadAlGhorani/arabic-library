@@ -3,6 +3,7 @@ const Category = require('../models/Category');
 const Book = require('../models/Book');
 const auth = require('../middleware/auth');
 const { requireSuperAdmin } = require('../middleware/roles');
+const { logAction } = require('../services/auditLog');
 
 const router = express.Router();
 
@@ -31,6 +32,13 @@ router.post('/', auth, requireSuperAdmin, async (req, res) => {
 
     const category = await Category.create({ name });
     res.status(201).json(category);
+
+    logAction(req, {
+      action: 'create',
+      entityType: 'category',
+      entityId: category._id,
+      details: `Created category "${name}"`,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -55,6 +63,13 @@ router.put('/:id', auth, requireSuperAdmin, async (req, res) => {
     }
 
     res.json(category);
+
+    logAction(req, {
+      action: 'update',
+      entityType: 'category',
+      entityId: category._id,
+      details: `Updated category to "${name}"`,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -76,6 +91,13 @@ router.delete('/:id', auth, requireSuperAdmin, async (req, res) => {
     }
 
     res.json({ message: 'Category deleted' });
+
+    logAction(req, {
+      action: 'delete',
+      entityType: 'category',
+      entityId: category._id,
+      details: `Deleted category "${category.name}"`,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

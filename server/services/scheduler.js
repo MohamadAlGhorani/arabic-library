@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const Reservation = require('../models/Reservation');
 const Book = require('../models/Book');
 const Admin = require('../models/Admin');
-const { sendPickupReminder, sendReturnReminder, sendAdminPickupNotification, sendAdminReturnNotification } = require('./email');
+const { sendPickupReminder, sendReturnReminder, sendAdminPickupNotification, sendAdminReturnNotification, sendOverdueNotice, sendAdminOverdueNotification } = require('./email');
 
 /**
  * Get admin emails for a given location (location admins + all super admins).
@@ -127,7 +127,69 @@ const startReminderScheduler = () => {
         }
       }
 
-      if (pickupReservations.length === 0 && returnReservations.length === 0) {
+      // --- Overdue escalation (collected books past return date) ---
+      const todayStr = new Date().toISOString().split('T')[0];
+      const overdueReservations = await Reservation.find({
+        status: 'collected',
+        returnDate: { $ne: '', $lt: todayStr },
+      })
+        .populate({ path: 'bookId', select: 'title' })
+        .populate({ path: 'location', select: 'name' });
+
+      if (overdueReservations.length > 0) {
+        console.log(`[Scheduler] Processing ${overdueReservations.length} overdue reservation(s)...`);
+        for (const reservation of overdueReservations) {
+          try {
+            const daysOverdue = Math.floor((new Date(todayStr) - new Date(reservation.returnDate)) / (1000 * 60 * 60 * 24));
+            const count = reservation.overdueReminderCount || 0;
+
+            // Escalation: count=0 & 1+ days → send 1st, count=1 & 3+ days → send 2nd, count=2 & 7+ days → send 3rd
+            let shouldSend = false;
+            if (count === 0 && daysOverdue >= 1) shouldSend = true;
+            else if (count === 1 && daysOverdue >= 3) shouldSend = true;
+            else if (count === 2 && daysOverdue >= 7) shouldSend = true;
+
+            if (shouldSend) {
+              const bookTitle = reservation.bookId?.title || 'Unknown';
+              const locationName = reservation.location?.name || '';
+
+              // Send to customer
+              await sendOverdueNotice({
+                to: reservation.email,
+                name: reservation.name,
+                bookTitle,
+                returnDate: reservation.returnDate,
+                daysOverdue,
+                locationName,
+              });
+
+              // Notify admins (non-blocking)
+              getAdminEmails(reservation.location?._id).then((adminEmails) => {
+                if (adminEmails.length > 0) {
+                  sendAdminOverdueNotification({
+                    to: adminEmails.join(','),
+                    customerName: reservation.name,
+                    customerEmail: reservation.email,
+                    customerPhone: reservation.phone || '',
+                    bookTitle,
+                    returnDate: reservation.returnDate,
+                    daysOverdue,
+                    locationName,
+                  }).catch((err) => console.error(`[Scheduler] Failed to send admin overdue notification:`, err.message));
+                }
+              }).catch((err) => console.error(`[Scheduler] Failed to query admins:`, err.message));
+
+              reservation.overdueReminderCount = count + 1;
+              await reservation.save();
+              console.log(`[Scheduler] Overdue notice #${count + 1} sent to ${reservation.email} (${daysOverdue} days overdue)`);
+            }
+          } catch (err) {
+            console.error(`[Scheduler] Failed to send overdue notice to ${reservation.email}:`, err.message);
+          }
+        }
+      }
+
+      if (pickupReservations.length === 0 && returnReservations.length === 0 && overdueReservations.length === 0) {
         console.log('[Scheduler] No reminders to send.');
       }
     } catch (error) {

@@ -73,4 +73,16 @@ export const deleteAdmin = (id) => api.delete(`/admins/${id}`);
 export const getPage = (slug) => api.get(`/pages/${slug}`);
 export const updatePage = (slug, data) => api.put(`/pages/${slug}`, data);
 
+// Reports
+export const getReports = (params) => api.get('/reports', { params });
+
+// Audit Logs
+export const getAuditLogs = (params) => api.get('/audit-logs', { params });
+
+// Contact
+export const sendContact = (data) => api.post('/contact', data);
+
+// Bulk Import
+export const bulkImportBooks = (data) => api.post('/books/bulk-import', data);
+
 export default api;

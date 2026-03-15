@@ -2,6 +2,7 @@ const express = require('express');
 const PageContent = require('../models/PageContent');
 const auth = require('../middleware/auth');
 const { requireSuperAdmin } = require('../middleware/roles');
+const { logAction } = require('../services/auditLog');
 
 const router = express.Router();
 
@@ -44,6 +45,13 @@ router.put('/:slug', auth, requireSuperAdmin, async (req, res) => {
     await page.save();
 
     res.json(page);
+
+    logAction(req, {
+      action: 'update',
+      entityType: 'page',
+      entityId: page._id,
+      details: `Updated page "${slug}"`,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

@@ -91,21 +91,21 @@ export default function BookDetailModal({ book, onClose }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="book-detail-title"
-        className="bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative cursor-default"
+        className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative cursor-default"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button
           ref={closeRef}
           onClick={onClose}
-          className="absolute top-3 end-3 z-10 text-gray-500 hover:text-gray-800 bg-white/80 rounded-full p-1 transition-colors"
+          className="absolute top-3 end-3 z-10 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 bg-white/80 dark:bg-gray-800/80 rounded-full p-1 transition-colors"
           aria-label={t('books.close')}
         >
           <HiOutlineXMark className="w-6 h-6" />
         </button>
 
         {/* Image */}
-        <div className="h-64 bg-gray-100 overflow-hidden rounded-t-xl">
+        <div className="h-64 bg-gray-100 dark:bg-gray-700 overflow-hidden rounded-t-xl">
           {book.image ? (
             <img
               src={book.image}
@@ -113,7 +113,7 @@ export default function BookDetailModal({ book, onClose }) {
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-300">
+            <div className="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-500">
               <HiOutlineBookOpen className="w-16 h-16" />
             </div>
           )}
@@ -125,7 +125,7 @@ export default function BookDetailModal({ book, onClose }) {
           <div className="flex items-start justify-between gap-3 mb-3">
             <h2
               id="book-detail-title"
-              className="text-xl font-bold text-gray-800"
+              className="text-xl font-bold text-gray-800 dark:text-gray-100"
             >
               {book.title}
             </h2>
@@ -140,12 +140,12 @@ export default function BookDetailModal({ book, onClose }) {
           {/* Category + Location pills */}
           <div className="flex flex-wrap gap-1.5 mb-4">
             {categoryName && (
-              <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+              <span className="text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full">
                 {categoryName}
               </span>
             )}
             {locationName && (
-              <span className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+              <span className="text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full flex items-center gap-0.5">
                 <HiOutlineBuildingStorefront className="w-3 h-3" />
                 {locationName}
               </span>
@@ -153,13 +153,13 @@ export default function BookDetailModal({ book, onClose }) {
           </div>
 
           {/* Full description */}
-          <p className="text-gray-600 text-sm leading-relaxed mb-4">
+          <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
             {book.description}
           </p>
 
           {/* Return date for borrowed books */}
           {book.status === 'borrowed' && book.returnDate && (
-            <div className="flex items-center gap-1.5 text-sm text-amber-700 bg-amber-50 px-3 py-2 rounded-lg mb-4">
+            <div className="flex items-center gap-1.5 text-sm text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-3 py-2 rounded-lg mb-4">
               <HiOutlineCalendarDays className="w-4 h-4 shrink-0" />
               <span>
                 {t('books.availableFrom')}:{' '}
@@ -170,7 +170,7 @@ export default function BookDetailModal({ book, onClose }) {
 
           {/* Pickup date for reserved books */}
           {book.status === 'reserved' && book.pickupDate && (
-            <div className="flex items-center gap-1.5 text-sm text-orange-700 bg-orange-50 px-3 py-2 rounded-lg mb-4">
+            <div className="flex items-center gap-1.5 text-sm text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30 px-3 py-2 rounded-lg mb-4">
               <HiOutlineCalendarDays className="w-4 h-4 shrink-0" />
               <span>
                 {t('books.pickupOn')}:{' '}

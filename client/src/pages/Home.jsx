@@ -47,7 +47,7 @@ export default function Home() {
       <select
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+        className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 dark:text-gray-100"
         aria-label={t('books.allCategories')}
       >
         <option value="">{t('books.allCategories')}</option>
@@ -61,7 +61,7 @@ export default function Home() {
         <select
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+          className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 dark:text-gray-100"
           aria-label={t('books.allLocations')}
         >
           <option value="">{t('books.allLocations')}</option>
@@ -75,7 +75,7 @@ export default function Home() {
       <select
         value={status}
         onChange={(e) => setStatus(e.target.value)}
-        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+        className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-700 dark:text-gray-100"
         aria-label={t('books.allStatuses')}
       >
         <option value="">{t('books.allStatuses')}</option>
@@ -89,8 +89,8 @@ export default function Home() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('app.title')}</h1>
-        <p className="text-gray-500">{t('app.subtitle')}</p>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">{t('app.title')}</h1>
+        <p className="text-gray-500 dark:text-gray-400">{t('app.subtitle')}</p>
       </div>
 
       {/* Filters — Desktop: inline row, Mobile: search + filter button */}
@@ -98,13 +98,13 @@ export default function Home() {
         {/* Search bar + filter trigger (mobile) */}
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <HiOutlineMagnifyingGlass className="absolute top-1/2 -translate-y-1/2 start-3 w-5 h-5 text-gray-400 pointer-events-none" />
+            <HiOutlineMagnifyingGlass className="absolute top-1/2 -translate-y-1/2 start-3 w-5 h-5 text-gray-400 dark:text-gray-500 pointer-events-none" />
             <input
               type="text"
               placeholder={t('books.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full ps-10 pe-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full ps-10 pe-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-gray-100"
               aria-label={t('books.searchPlaceholder')}
             />
           </div>
@@ -112,13 +112,13 @@ export default function Home() {
           {/* Filter trigger button — mobile only */}
           <button
             onClick={() => setFilterOpen(true)}
-            className="relative md:hidden flex items-center gap-1.5 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+            className="relative md:hidden flex items-center gap-1.5 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
             aria-label={t('books.filters')}
             aria-expanded={filterOpen}
             aria-controls="filter-drawer"
           >
-            <HiOutlineFunnel className="w-5 h-5 text-gray-600" />
-            <span className="text-sm text-gray-600">{t('books.filters')}</span>
+            <HiOutlineFunnel className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+            <span className="text-sm text-gray-600 dark:text-gray-300">{t('books.filters')}</span>
             {activeFilterCount > 0 && (
               <span className="absolute -top-1.5 -end-1.5 w-5 h-5 bg-emerald-600 text-white text-xs rounded-full flex items-center justify-center font-semibold">
                 {activeFilterCount}
@@ -133,7 +133,7 @@ export default function Home() {
           {activeFilterCount > 0 && (
             <button
               onClick={clearFilters}
-              className="px-4 py-2 text-sm text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer whitespace-nowrap"
+              className="px-4 py-2 text-sm text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg transition-colors cursor-pointer whitespace-nowrap"
             >
               {t('books.clearFilters')}
             </button>
@@ -156,17 +156,17 @@ export default function Home() {
             id="filter-drawer"
             role="dialog"
             aria-label={t('books.filters')}
-            className="absolute bottom-0 inset-x-0 bg-white rounded-t-2xl shadow-2xl p-5 animate-slide-up"
+            className="absolute bottom-0 inset-x-0 bg-white dark:bg-gray-800 rounded-t-2xl shadow-2xl p-5 animate-slide-up"
           >
             {/* Handle bar */}
-            <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4" />
+            <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-4" />
 
             {/* Header */}
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-semibold text-gray-800">{t('books.filters')}</h2>
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{t('books.filters')}</h2>
               <button
                 onClick={() => setFilterOpen(false)}
-                className="p-1 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer"
                 aria-label={t('books.close')}
               >
                 <HiOutlineXMark className="w-5 h-5" />
@@ -183,7 +183,7 @@ export default function Home() {
               {activeFilterCount > 0 && (
                 <button
                   onClick={() => { clearFilters(); setFilterOpen(false); }}
-                  className="flex-1 py-2.5 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer text-sm font-medium"
+                  className="flex-1 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer text-sm font-medium"
                 >
                   {t('books.clearFilters')}
                 </button>
@@ -201,9 +201,9 @@ export default function Home() {
 
       {/* Books Grid */}
       {loading ? (
-        <div className="text-center py-12 text-gray-500" role="status" aria-live="polite">Loading...</div>
+        <div className="text-center py-12 text-gray-500 dark:text-gray-400" role="status" aria-live="polite">Loading...</div>
       ) : books.length === 0 ? (
-        <div className="text-center py-12 text-gray-500" role="status" aria-live="polite">{t('books.noBooks')}</div>
+        <div className="text-center py-12 text-gray-500 dark:text-gray-400" role="status" aria-live="polite">{t('books.noBooks')}</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {books.map((book) => (

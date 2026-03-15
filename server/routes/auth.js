@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 const auth = require('../middleware/auth');
+const { logAction } = require('../services/auditLog');
 
 const router = express.Router();
 
@@ -48,6 +49,16 @@ router.post('/login', async (req, res) => {
       role: admin.role,
       locationId: admin.location ? admin.location.toString() : null,
     });
+
+    // Log login action (req.adminId not set since this is pre-auth, so set it manually)
+    req.adminId = admin._id;
+    logAction(req, {
+      action: 'login',
+      entityType: 'admin',
+      entityId: admin._id,
+      details: `Admin "${admin.username}" logged in`,
+      location: admin.location || null,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

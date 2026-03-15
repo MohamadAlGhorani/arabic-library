@@ -28,26 +28,26 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-56px)] flex items-center justify-center bg-gray-50 px-4">
-      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
+    <div className="min-h-[calc(100vh-56px)] flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 w-full max-w-sm">
         <div className="flex justify-center mb-4">
-          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center">
-            <HiOutlineShieldCheck className="w-8 h-8 text-emerald-600" />
+          <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/40 rounded-full flex items-center justify-center">
+            <HiOutlineShieldCheck className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
           </div>
         </div>
-        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+        <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-100 mb-6">
           {t('admin.login')}
         </h1>
 
         {error && (
-          <div className="bg-red-50 text-red-700 px-4 py-2 rounded-lg mb-4 text-center" role="alert">
+          <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg mb-4 text-center" role="alert">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="login-username" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="login-username" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               <HiOutlineUser className="w-4 h-4" />
               {t('admin.username')}
             </label>
@@ -58,11 +58,11 @@ export default function Login() {
               autoComplete="username"
               value={form.username}
               onChange={(e) => setForm({ ...form, username: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
           <div>
-            <label htmlFor="login-password" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="login-password" className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               <HiOutlineLockClosed className="w-4 h-4" />
               {t('admin.password')}
             </label>
@@ -73,7 +73,7 @@ export default function Login() {
               autoComplete="current-password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
           <button

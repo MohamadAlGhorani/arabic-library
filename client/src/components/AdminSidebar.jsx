@@ -11,6 +11,8 @@ import {
   HiOutlineUsers,
   HiOutlineDocumentText,
   HiOutlineXMark,
+  HiOutlineChartBar,
+  HiOutlineClipboardDocumentList,
 } from 'react-icons/hi2';
 
 export default function AdminSidebar({ isOpen, onClose }) {
@@ -22,6 +24,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
     { to: '/admin/books', label: t('nav.books'), icon: HiOutlineBookOpen },
     { to: '/admin/reservations', label: t('nav.reservations'), icon: HiOutlineCalendarDays },
     { to: '/admin/settings', label: t('nav.settings'), icon: HiOutlineCog6Tooth },
+    { to: '/admin/reports', label: t('nav.reports'), icon: HiOutlineChartBar },
   ];
 
   if (isSuperAdmin) {
@@ -30,6 +33,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
       { to: '/admin/locations', label: t('nav.locations'), icon: HiOutlineBuildingStorefront },
       { to: '/admin/admins', label: t('nav.admins'), icon: HiOutlineUsers },
       { to: '/admin/content', label: t('nav.content'), icon: HiOutlineDocumentText },
+      { to: '/admin/audit-log', label: t('nav.auditLog'), icon: HiOutlineClipboardDocumentList },
     );
   }
 
@@ -70,7 +74,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
 
       {/* Desktop sidebar (always visible on md+) */}
       <aside
-        className="hidden md:block w-56 bg-gray-800 text-white min-h-[calc(100vh-56px)] p-4 shrink-0"
+        className="hidden md:block w-56 bg-gray-800 text-white sticky top-0 h-screen overflow-y-auto p-4 shrink-0"
         aria-label="Sidebar"
       >
         {navContent}

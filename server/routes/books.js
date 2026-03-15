@@ -6,6 +6,7 @@ const { resolveLocation } = require('../middleware/roles');
 const upload = require('../middleware/upload');
 const fs = require('fs');
 const path = require('path');
+const { logAction } = require('../services/auditLog');
 
 const router = express.Router();
 
@@ -115,7 +116,121 @@ router.post('/', auth, resolveLocation, upload.single('image'), async (req, res)
       { path: 'location', select: 'name' },
     ]);
     res.status(201).json(populated);
+
+    logAction(req, {
+      action: 'create',
+      entityType: 'book',
+      entityId: book._id,
+      details: `Created book "${title}"`,
+      location: locationId,
+    }).catch(console.error);
   } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// POST /api/books/bulk-import - admin
+router.post('/bulk-import', auth, resolveLocation, async (req, res) => {
+  try {
+    const { books: bookRows } = req.body;
+
+    if (!Array.isArray(bookRows) || bookRows.length === 0) {
+      return res.status(400).json({ message: 'No books provided' });
+    }
+
+    if (bookRows.length > 500) {
+      return res.status(400).json({ message: 'Maximum 500 books per import' });
+    }
+
+    const Category = require('../models/Category');
+    const Location = require('../models/Location');
+
+    // Build lookup maps for categories and locations by name (case-insensitive)
+    const categories = await Category.find().lean();
+    const categoryMap = {};
+    for (const c of categories) {
+      categoryMap[c.name.toLowerCase().trim()] = c._id;
+    }
+
+    const locations = await Location.find().lean();
+    const locationMap = {};
+    for (const l of locations) {
+      locationMap[l.name.toLowerCase().trim()] = l._id;
+    }
+
+    const results = { created: 0, errors: [] };
+
+    for (let i = 0; i < bookRows.length; i++) {
+      const row = bookRows[i];
+      const rowNum = i + 1;
+
+      const title = (row.title || '').trim();
+      const description = (row.description || '').trim();
+      const categoryName = (row.category || '').trim();
+      const locationName = (row.location || '').trim();
+
+      if (!title) {
+        results.errors.push({ row: rowNum, message: 'Title is required' });
+        continue;
+      }
+      if (!description) {
+        results.errors.push({ row: rowNum, message: `Description is required for "${title}"` });
+        continue;
+      }
+
+      // Resolve category
+      const categoryId = categoryMap[categoryName.toLowerCase()];
+      if (!categoryId) {
+        results.errors.push({ row: rowNum, message: `Category "${categoryName}" not found for "${title}"` });
+        continue;
+      }
+
+      // Resolve location: use provided name, fall back to admin's location
+      let locationId;
+      if (locationName) {
+        locationId = locationMap[locationName.toLowerCase()];
+        if (!locationId) {
+          results.errors.push({ row: rowNum, message: `Location "${locationName}" not found for "${title}"` });
+          continue;
+        }
+      } else {
+        locationId = req.effectiveLocationId;
+      }
+
+      // Location admins can only import to their own location
+      if (req.adminRole !== 'super_admin' && locationId && locationId.toString() !== req.effectiveLocationId) {
+        results.errors.push({ row: rowNum, message: `Not authorized to add books to this location for "${title}"` });
+        continue;
+      }
+
+      if (!locationId) {
+        results.errors.push({ row: rowNum, message: `Location is required for "${title}"` });
+        continue;
+      }
+
+      try {
+        await Book.create({
+          title,
+          description,
+          category: categoryId,
+          location: locationId,
+          status: 'available',
+        });
+        results.created++;
+      } catch (err) {
+        results.errors.push({ row: rowNum, message: `Failed to create "${title}": ${err.message}` });
+      }
+    }
+
+    logAction(req, {
+      action: 'create',
+      entityType: 'book',
+      details: `Bulk imported ${results.created} book(s)${results.errors.length ? `, ${results.errors.length} error(s)` : ''}`,
+    }).catch(console.error);
+
+    res.json(results);
+  } catch (error) {
+    console.error('Bulk import error:', error.message);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -157,6 +272,14 @@ router.put('/:id', auth, resolveLocation, upload.single('image'), async (req, re
       { path: 'location', select: 'name' },
     ]);
     res.json(populated);
+
+    logAction(req, {
+      action: 'update',
+      entityType: 'book',
+      entityId: book._id,
+      details: `Updated book "${book.title}"`,
+      location: book.location,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -183,8 +306,18 @@ router.delete('/:id', auth, resolveLocation, async (req, res) => {
       }
     }
 
+    const bookTitle = book.title;
+    const bookLocation = book.location;
     await Book.findByIdAndDelete(req.params.id);
     res.json({ message: 'Book deleted' });
+
+    logAction(req, {
+      action: 'delete',
+      entityType: 'book',
+      entityId: book._id,
+      details: `Deleted book "${bookTitle}"`,
+      location: bookLocation,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

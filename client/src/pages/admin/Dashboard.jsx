@@ -28,7 +28,7 @@ export default function Dashboard() {
   }, [selectedLocation, admin, isSuperAdmin]);
 
   if (!stats) {
-    return <div className="p-6 text-gray-500">Loading...</div>;
+    return <div className="p-6 text-gray-500 dark:text-gray-400">Loading...</div>;
   }
 
   const cards = [
@@ -42,12 +42,12 @@ export default function Dashboard() {
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <h1 className="text-2xl font-bold text-gray-800">{t('admin.dashboard')}</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('admin.dashboard')}</h1>
         {isSuperAdmin && locations.length > 0 && (
           <select
             value={selectedLocation}
             onChange={(e) => setSelectedLocation(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-gray-100"
             aria-label={t('books.allLocations')}
           >
             <option value="">{t('books.allLocations')}</option>
@@ -62,28 +62,28 @@ export default function Dashboard() {
         {cards.map((card) => {
           const Icon = card.icon;
           return (
-            <div key={card.label} className="bg-white rounded-xl shadow p-5">
+            <div key={card.label} className="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-gray-500 text-sm">{card.label}</p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">{card.label}</p>
                 <div className={`${card.color} w-10 h-10 rounded-lg flex items-center justify-center`}>
                   <Icon className="w-5 h-5 text-white" />
                 </div>
               </div>
-              <span className="text-3xl font-bold text-gray-800">{card.value}</span>
+              <span className="text-3xl font-bold text-gray-800 dark:text-gray-100">{card.value}</span>
             </div>
           );
         })}
       </div>
 
-      <div className="bg-white rounded-xl shadow p-5 mb-8">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-5 mb-8">
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
           {t('admin.booksPerCategory')}
         </h2>
         <div className="space-y-3">
           {stats.booksPerCategory.map((cat) => (
             <div key={cat.name} className="flex items-center gap-3">
-              <span className="text-gray-600 w-32">{cat.name}</span>
-              <div className="flex-1 bg-gray-100 rounded-full h-6 overflow-hidden">
+              <span className="text-gray-600 dark:text-gray-300 w-32">{cat.name}</span>
+              <div className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full h-6 overflow-hidden">
                 <div
                   className="bg-emerald-500 h-full rounded-full flex items-center justify-end px-2"
                   style={{
@@ -100,25 +100,25 @@ export default function Dashboard() {
       </div>
 
       {/* Borrowed Books with Return Dates */}
-      <div className="bg-white rounded-xl shadow p-5">
-        <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800 mb-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
           <HiOutlineArrowPath className="w-5 h-5 text-red-500" />
           {t('admin.borrowedBooksSection')}
         </h2>
         {(!stats.borrowedReservations || stats.borrowedReservations.length === 0) ? (
-          <p className="text-gray-400 text-sm">{t('admin.noBorrowedBooks')}</p>
+          <p className="text-gray-400 dark:text-gray-500 text-sm">{t('admin.noBorrowedBooks')}</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                  <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.bookTitleCol')}</th>
-                  <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.borrowerCol')}</th>
-                  <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.returnDateCol')}</th>
-                  <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.statusCol')}</th>
+                  <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.bookTitleCol')}</th>
+                  <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.borrowerCol')}</th>
+                  <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.returnDateCol')}</th>
+                  <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.statusCol')}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                 {stats.borrowedReservations.map((r) => {
                   const today = new Date().toISOString().split('T')[0];
                   const tomorrow = new Date();
@@ -136,10 +136,10 @@ export default function Dashboard() {
                   }
 
                   return (
-                    <tr key={r._id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 font-medium text-gray-800">{r.bookId?.title || '-'}</td>
-                      <td className="px-4 py-3 text-gray-700">{r.name}</td>
-                      <td className="px-4 py-3 text-gray-700">{r.returnDate || '-'}</td>
+                    <tr key={r._id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">{r.bookId?.title || '-'}</td>
+                      <td className="px-4 py-3 text-gray-700 dark:text-gray-200">{r.name}</td>
+                      <td className="px-4 py-3 text-gray-700 dark:text-gray-200">{r.returnDate || '-'}</td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${badgeClass}`}>
                           {badgeText}

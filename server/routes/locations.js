@@ -7,6 +7,7 @@ const Settings = require('../models/Settings');
 const auth = require('../middleware/auth');
 const { requireSuperAdmin } = require('../middleware/roles');
 const upload = require('../middleware/upload');
+const { logAction } = require('../services/auditLog');
 
 const router = express.Router();
 
@@ -23,7 +24,7 @@ router.get('/', async (req, res) => {
 // POST /api/locations - super admin only
 router.post('/', auth, requireSuperAdmin, upload.single('image'), async (req, res) => {
   try {
-    const { name, address, phone, description } = req.body;
+    const { name, address, phone, description, lat, lng } = req.body;
 
     if (!name) {
       return res.status(400).json({ message: 'Location name is required' });
@@ -34,6 +35,8 @@ router.post('/', auth, requireSuperAdmin, upload.single('image'), async (req, re
       address: address || '',
       phone: phone || '',
       description: description || '',
+      lat: lat !== undefined && lat !== '' ? parseFloat(lat) : null,
+      lng: lng !== undefined && lng !== '' ? parseFloat(lng) : null,
     };
 
     if (req.file) {
@@ -46,6 +49,14 @@ router.post('/', auth, requireSuperAdmin, upload.single('image'), async (req, re
     await Settings.create({ location: location._id });
 
     res.status(201).json(location);
+
+    logAction(req, {
+      action: 'create',
+      entityType: 'location',
+      entityId: location._id,
+      details: `Created location "${name}"`,
+      location: location._id,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -59,11 +70,13 @@ router.put('/:id', auth, requireSuperAdmin, upload.single('image'), async (req, 
       return res.status(404).json({ message: 'Location not found' });
     }
 
-    const { name, address, phone, description } = req.body;
+    const { name, address, phone, description, lat, lng } = req.body;
     if (name) location.name = name;
     if (address !== undefined) location.address = address;
     if (phone !== undefined) location.phone = phone;
     if (description !== undefined) location.description = description;
+    if (lat !== undefined) location.lat = lat !== '' ? parseFloat(lat) : null;
+    if (lng !== undefined) location.lng = lng !== '' ? parseFloat(lng) : null;
 
     if (req.file) {
       // Remove old image
@@ -76,6 +89,14 @@ router.put('/:id', auth, requireSuperAdmin, upload.single('image'), async (req, 
 
     await location.save();
     res.json(location);
+
+    logAction(req, {
+      action: 'update',
+      entityType: 'location',
+      entityId: location._id,
+      details: `Updated location "${location.name}"`,
+      location: location._id,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -105,8 +126,16 @@ router.delete('/:id', auth, requireSuperAdmin, async (req, res) => {
     // Delete location settings
     await Settings.deleteOne({ location: req.params.id });
 
+    const locationName = location.name;
     await Location.findByIdAndDelete(req.params.id);
     res.json({ message: 'Location deleted' });
+
+    logAction(req, {
+      action: 'delete',
+      entityType: 'location',
+      entityId: location._id,
+      details: `Deleted location "${locationName}"`,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

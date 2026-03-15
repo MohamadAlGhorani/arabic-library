@@ -17,8 +17,12 @@ import ManageSettings from './pages/admin/ManageSettings';
 import ManageLocations from './pages/admin/ManageLocations';
 import ManageAdmins from './pages/admin/ManageAdmins';
 import ManagePages from './pages/admin/ManagePages';
+import Reports from './pages/admin/Reports';
+import AuditLog from './pages/admin/AuditLog';
 import About from './pages/About';
 import HowItWorks from './pages/HowItWorks';
+import Contact from './pages/Contact';
+import Locations from './pages/Locations';
 
 function ProtectedRoute() {
   const { t } = useTranslation();
@@ -44,7 +48,7 @@ function ProtectedRoute() {
   return (
     <div className="flex">
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="flex-1 bg-gray-50 min-h-[calc(100vh-56px)] overflow-auto">
+      <div className="flex-1 bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-56px)] overflow-auto">
         <button
           onClick={() => setSidebarOpen(true)}
           className="md:hidden flex items-center gap-2 m-4 mb-0 px-3 py-2 bg-gray-800 text-white rounded-lg text-sm cursor-pointer hover:bg-gray-700 transition-colors"
@@ -86,7 +90,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar />
         <main id="main-content">
         <Routes>
@@ -94,6 +98,8 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/locations" element={<Locations />} />
             <Route path="/reserve/:id" element={<Reserve />} />
             <Route path="/admin/login" element={<Login />} />
           </Route>
@@ -102,11 +108,13 @@ export default function App() {
             <Route path="books" element={<ManageBooks />} />
             <Route path="reservations" element={<ManageReservations />} />
             <Route path="settings" element={<ManageSettings />} />
+            <Route path="reports" element={<Reports />} />
             <Route element={<SuperAdminRoute />}>
               <Route path="categories" element={<ManageCategories />} />
               <Route path="locations" element={<ManageLocations />} />
               <Route path="admins" element={<ManageAdmins />} />
               <Route path="content" element={<ManagePages />} />
+              <Route path="audit-log" element={<AuditLog />} />
             </Route>
           </Route>
         </Routes>

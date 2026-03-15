@@ -130,7 +130,7 @@ export default function ManageAdmins() {
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">{t('admin.manageAdmins')}</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('admin.manageAdmins')}</h1>
         <button
           onClick={() => { resetForm(); setShowForm(!showForm); }}
           className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
@@ -142,13 +142,13 @@ export default function ManageAdmins() {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-5 mb-6 space-y-4">
-          <h2 className="text-lg font-semibold">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl shadow p-5 mb-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
             {editing ? t('admin.editAdmin') : t('admin.addAdmin')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="adm-username" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="adm-username" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 {t('admin.adminUsername')}
               </label>
               <input
@@ -157,13 +157,13 @@ export default function ManageAdmins() {
                 required
                 value={form.username}
                 onChange={(e) => setForm({ ...form, username: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
             </div>
             <div>
-              <label htmlFor="adm-password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="adm-password" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 {t('admin.adminPassword')}
-                {editing && <span className="text-gray-400 ms-1">({t('admin.passwordOptional')})</span>}
+                {editing && <span className="text-gray-400 dark:text-gray-500 ms-1">({t('admin.passwordOptional')})</span>}
               </label>
               <input
                 id="adm-password"
@@ -172,11 +172,11 @@ export default function ManageAdmins() {
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 placeholder={editing ? t('admin.passwordOptional') : ''}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
             </div>
             <div>
-              <label htmlFor="adm-fullname" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="adm-fullname" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 {t('admin.adminFullName')}
               </label>
               <input
@@ -184,11 +184,11 @@ export default function ManageAdmins() {
                 type="text"
                 value={form.fullName}
                 onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
             </div>
             <div>
-              <label htmlFor="adm-email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="adm-email" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 {t('admin.adminEmail')}
               </label>
               <input
@@ -196,11 +196,11 @@ export default function ManageAdmins() {
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
             </div>
             <div>
-              <label htmlFor="adm-phone" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="adm-phone" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 {t('admin.adminPhone')}
               </label>
               <input
@@ -208,18 +208,18 @@ export default function ManageAdmins() {
                 type="text"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               />
             </div>
             <div>
-              <label htmlFor="adm-role" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="adm-role" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 {t('admin.adminRole')}
               </label>
               <select
                 id="adm-role"
                 value={form.role}
                 onChange={(e) => setForm({ ...form, role: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               >
                 <option value="location_admin">{t('admin.roleLocationAdmin')}</option>
                 <option value="super_admin">{t('admin.roleSuperAdmin')}</option>
@@ -227,7 +227,7 @@ export default function ManageAdmins() {
             </div>
             {form.role === 'location_admin' && (
               <div>
-                <label htmlFor="adm-location" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="adm-location" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                   {t('admin.adminLocation')}
                 </label>
                 <select
@@ -235,7 +235,7 @@ export default function ManageAdmins() {
                   required
                   value={form.location}
                   onChange={(e) => setForm({ ...form, location: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
                 >
                   <option value="">{t('admin.selectLocation')}</option>
                   {locations.map((loc) => (
@@ -257,23 +257,23 @@ export default function ManageAdmins() {
       )}
 
       {/* Filters */}
-      <div className="bg-white rounded-xl shadow p-4 mb-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 mb-4">
         <div className="flex flex-wrap gap-3">
           <div className="relative flex-1 min-w-[180px]">
-            <HiOutlineMagnifyingGlass className="absolute top-1/2 -translate-y-1/2 start-3 w-4 h-4 text-gray-400 pointer-events-none" />
+            <HiOutlineMagnifyingGlass className="absolute top-1/2 -translate-y-1/2 start-3 w-4 h-4 text-gray-400 dark:text-gray-500 pointer-events-none" />
             <input
               type="text"
               placeholder={t('admin.searchAdmins')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full ps-9 pe-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full ps-9 pe-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               aria-label={t('admin.searchAdmins')}
             />
           </div>
           <select
             value={filterRole}
             onChange={(e) => setFilterRole(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
             aria-label={t('admin.adminRole')}
           >
             <option value="">{t('admin.adminRole')}</option>
@@ -283,7 +283,7 @@ export default function ManageAdmins() {
           <select
             value={filterLocation}
             onChange={(e) => setFilterLocation(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
             aria-label={t('books.allLocations')}
           >
             <option value="">{t('books.allLocations')}</option>
@@ -294,7 +294,7 @@ export default function ManageAdmins() {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
             aria-label={t('admin.adminStatus')}
           >
             <option value="">{t('admin.adminStatus')}</option>
@@ -305,36 +305,36 @@ export default function ManageAdmins() {
       </div>
 
       {admins.length === 0 ? (
-        <div className="bg-white rounded-xl shadow p-8 text-center text-gray-500">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-8 text-center text-gray-500 dark:text-gray-400">
           {t('admin.noAdmins')}
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow overflow-x-auto">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.adminUsername')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.adminFullName')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.adminRole')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.locationCol')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.adminEmail')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.adminStatus')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.lastLoginCol')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.actionsCol')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.adminUsername')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.adminFullName')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.adminRole')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.locationCol')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.adminEmail')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.adminStatus')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.lastLoginCol')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.actionsCol')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {admins.map((adm) => (
-                <tr key={adm._id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-800">{adm.username}</td>
-                  <td className="px-4 py-3 text-gray-700">{adm.fullName || '-'}</td>
+                <tr key={adm._id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">{adm.username}</td>
+                  <td className="px-4 py-3 text-gray-700 dark:text-gray-200">{adm.fullName || '-'}</td>
                   <td className="px-4 py-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${roleColors[adm.role]}`}>
                       {adm.role === 'super_admin' ? t('admin.roleSuperAdmin') : t('admin.roleLocationAdmin')}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{adm.location?.name || '-'}</td>
-                  <td className="px-4 py-3 text-gray-600">{adm.email || '-'}</td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{adm.location?.name || '-'}</td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{adm.email || '-'}</td>
                   <td className="px-4 py-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                       adm.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -342,7 +342,7 @@ export default function ManageAdmins() {
                       {adm.isActive ? t('admin.active') : t('admin.inactive')}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{formatDate(adm.lastLogin)}</td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{formatDate(adm.lastLogin)}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2 flex-wrap">
                       <button

@@ -56,14 +56,14 @@ export default function ManageCategories() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">{t('admin.manageCategories')}</h1>
+      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">{t('admin.manageCategories')}</h1>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-5 mb-6">
-        <h2 className="text-lg font-semibold mb-3">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl shadow p-5 mb-6">
+        <h2 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-100">
           {editing ? t('admin.editCategory') : t('admin.addCategory')}
         </h2>
         {error && (
-          <div className="bg-red-50 text-red-700 px-4 py-2 rounded-lg mb-3">{error}</div>
+          <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-4 py-2 rounded-lg mb-3">{error}</div>
         )}
         <div className="flex gap-3">
           <input
@@ -74,7 +74,7 @@ export default function ManageCategories() {
             onChange={(e) => setName(e.target.value)}
             placeholder={t('admin.categoryName')}
             aria-label={t('admin.categoryName')}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
           />
           <button
             type="submit"
@@ -87,7 +87,7 @@ export default function ManageCategories() {
             <button
               type="button"
               onClick={handleCancel}
-              className="flex items-center gap-2 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+              className="flex items-center gap-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
             >
               <HiOutlineXMark className="w-4 h-4" />
               {t('admin.cancel')}
@@ -96,18 +96,18 @@ export default function ManageCategories() {
         </div>
       </form>
 
-      <div className="bg-white rounded-xl shadow overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50">
+          <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
-              <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.categoryName')}</th>
-              <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.actionsCol')}</th>
+              <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.categoryName')}</th>
+              <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.actionsCol')}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
             {categories.map((cat) => (
-              <tr key={cat._id} className="hover:bg-gray-50">
-                <td className="px-4 py-3 font-medium text-gray-800">{cat.name}</td>
+              <tr key={cat._id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">{cat.name}</td>
                 <td className="px-4 py-3">
                   <div className="flex gap-2">
                     <button

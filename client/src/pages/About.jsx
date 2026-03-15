@@ -45,7 +45,7 @@ export default function About() {
             dangerouslySetInnerHTML={{ __html: content }}
           />
         ) : (
-          <p className="text-center text-gray-500">{t('pages.noContent')}</p>
+          <p className="text-center text-gray-500 dark:text-gray-400">{t('pages.noContent')}</p>
         )}
       </div>
     </div>

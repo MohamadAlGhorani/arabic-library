@@ -8,10 +8,15 @@ import {
   HiOutlineArrowLeftOnRectangle,
   HiOutlineInformationCircle,
   HiOutlineQuestionMarkCircle,
+  HiOutlineChatBubbleLeftRight,
+  HiOutlineBuildingStorefront,
   HiOutlineBars3,
   HiOutlineXMark,
+  HiOutlineSun,
+  HiOutlineMoon,
 } from 'react-icons/hi2';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Navbar() {
@@ -19,6 +24,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { admin, logoutAdmin } = useAuth();
+  const { dark, toggleDark } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
@@ -52,41 +58,49 @@ export default function Navbar() {
     navigate('/');
   };
 
-  const navLinks = (
+  const navLinks = (mobile) => (
     <>
       <Link to="/" className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors">
-        <HiOutlineHome className="w-5 h-5" />
-        {t('nav.home')}
+        <HiOutlineHome className="w-5 h-5 shrink-0" />
+        <span className={mobile ? '' : 'hidden lg:inline'}>{t('nav.home')}</span>
       </Link>
       <Link to="/about" className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors">
-        <HiOutlineInformationCircle className="w-5 h-5" />
-        {t('nav.about')}
+        <HiOutlineInformationCircle className="w-5 h-5 shrink-0" />
+        <span className={mobile ? '' : 'hidden lg:inline'}>{t('nav.about')}</span>
       </Link>
       <Link to="/how-it-works" className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors">
-        <HiOutlineQuestionMarkCircle className="w-5 h-5" />
-        {t('nav.howItWorks')}
+        <HiOutlineQuestionMarkCircle className="w-5 h-5 shrink-0" />
+        <span className={mobile ? '' : 'hidden lg:inline'}>{t('nav.howItWorks')}</span>
+      </Link>
+      <Link to="/locations" className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors">
+        <HiOutlineBuildingStorefront className="w-5 h-5 shrink-0" />
+        <span className={mobile ? '' : 'hidden lg:inline'}>{t('nav.ourLocations')}</span>
+      </Link>
+      <Link to="/contact" className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors">
+        <HiOutlineChatBubbleLeftRight className="w-5 h-5 shrink-0" />
+        <span className={mobile ? '' : 'hidden lg:inline'}>{t('nav.contact')}</span>
       </Link>
       {admin ? (
         <>
           <Link to="/admin" className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors">
-            <HiOutlineShieldCheck className="w-5 h-5" />
-            {t('nav.dashboard')}
+            <HiOutlineShieldCheck className="w-5 h-5 shrink-0" />
+            <span className={mobile ? '' : 'hidden lg:inline'}>{t('nav.dashboard')}</span>
           </Link>
-          <span className="text-emerald-200 text-sm">
+          <span className="text-emerald-200 text-sm hidden lg:inline">
             {admin.fullName || admin.username}
           </span>
           <button
             onClick={handleLogout}
             className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors cursor-pointer"
           >
-            <HiOutlineArrowLeftOnRectangle className="w-5 h-5" />
-            {t('nav.logout')}
+            <HiOutlineArrowLeftOnRectangle className="w-5 h-5 shrink-0" />
+            <span className={mobile ? '' : 'hidden lg:inline'}>{t('nav.logout')}</span>
           </button>
         </>
       ) : (
         <Link to="/admin/login" className="flex items-center gap-1.5 hover:text-emerald-200 transition-colors">
-          <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
-          {t('nav.admin')}
+          <HiOutlineArrowRightOnRectangle className="w-5 h-5 shrink-0" />
+          <span className={mobile ? '' : 'hidden lg:inline'}>{t('nav.admin')}</span>
         </Link>
       )}
     </>
@@ -112,13 +126,27 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-1.5 lg:gap-3 text-sm lg:text-base">
+          <button
+            onClick={toggleDark}
+            className="p-1.5 rounded-lg hover:bg-emerald-600 transition-colors cursor-pointer"
+            aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {dark ? <HiOutlineSun className="w-5 h-5" /> : <HiOutlineMoon className="w-5 h-5" />}
+          </button>
           <LanguageSwitcher />
-          {navLinks}
+          {navLinks(false)}
         </div>
 
         {/* Mobile controls */}
         <div className="flex items-center gap-2 md:hidden">
+          <button
+            onClick={toggleDark}
+            className="p-1 hover:text-emerald-200 transition-colors cursor-pointer"
+            aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {dark ? <HiOutlineSun className="w-5 h-5" /> : <HiOutlineMoon className="w-5 h-5" />}
+          </button>
           <LanguageSwitcher />
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -142,7 +170,7 @@ export default function Navbar() {
           id="mobile-menu"
           className="md:hidden border-t border-emerald-600 px-4 py-3 flex flex-col gap-3"
         >
-          {navLinks}
+          {navLinks(true)}
         </div>
       )}
     </nav>

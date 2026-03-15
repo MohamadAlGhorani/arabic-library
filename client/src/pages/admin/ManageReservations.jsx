@@ -201,31 +201,32 @@ export default function ManageReservations() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">{t('admin.manageReservations')}</h1>
+      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">{t('admin.manageReservations')}</h1>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl shadow p-4 mb-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 mb-4">
         <div className="flex flex-wrap gap-3">
           <div className="relative flex-1 min-w-[180px]">
-            <HiOutlineMagnifyingGlass className="absolute top-1/2 -translate-y-1/2 start-3 w-4 h-4 text-gray-400 pointer-events-none" />
+            <HiOutlineMagnifyingGlass className="absolute top-1/2 -translate-y-1/2 start-3 w-4 h-4 text-gray-400 dark:text-gray-500 pointer-events-none" />
             <input
               type="text"
               placeholder={t('admin.searchReservations')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full ps-9 pe-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full ps-9 pe-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-gray-100"
               aria-label={t('admin.searchReservations')}
             />
           </div>
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-gray-100"
             aria-label={t('admin.allStatuses')}
           >
             <option value="">{t('admin.allStatuses')}</option>
             <option value="pending">{t('admin.pending')}</option>
             <option value="collected">{t('admin.collected')}</option>
+            <option value="overdue">{t('admin.overdue')}</option>
             <option value="completed">{t('admin.completed')}</option>
             <option value="cancelled">{t('admin.cancelled')}</option>
           </select>
@@ -233,7 +234,7 @@ export default function ManageReservations() {
             <select
               value={filterLocation}
               onChange={(e) => setFilterLocation(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-gray-100"
               aria-label={t('books.allLocations')}
             >
               <option value="">{t('books.allLocations')}</option>
@@ -246,50 +247,73 @@ export default function ManageReservations() {
       </div>
 
       {reservations.length === 0 ? (
-        <div className="bg-white rounded-xl shadow p-8 text-center text-gray-500">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-8 text-center text-gray-500 dark:text-gray-400">
           {t('admin.noReservations')}
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow overflow-x-auto">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.bookTitleCol')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.categoryCol')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.nameCol')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.emailCol')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.phoneCol')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.dateCol')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.timeCol')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.returnDateCol')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.statusCol')}</th>
-                <th className="px-4 py-3 text-start font-medium text-gray-600">{t('admin.actionsCol')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.bookTitleCol')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.categoryCol')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.nameCol')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.emailCol')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.phoneCol')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.codeCol')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.dateCol')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.timeCol')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.returnDateCol')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.statusCol')}</th>
+                <th className="px-4 py-3 text-start font-medium text-gray-600 dark:text-gray-300">{t('admin.actionsCol')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {reservations.map((r) => {
                 const StatusIcon = statusIcons[r.status];
+                const todayDate = new Date().toISOString().split('T')[0];
+                const isOverdue = r.status === 'collected' && r.returnDate && r.returnDate < todayDate;
+                const daysOverdue = isOverdue ? Math.floor((new Date(todayDate) - new Date(r.returnDate)) / (1000 * 60 * 60 * 24)) : 0;
                 return (
-                  <tr key={r._id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 font-medium text-gray-800">
+                  <tr key={r._id} className={`hover:bg-gray-50 dark:hover:bg-gray-700 ${isOverdue ? 'bg-red-50/50 dark:bg-red-900/20' : ''}`}>
+                    <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">
                       {r.bookId?.title || '-'}
                     </td>
-                    <td className="px-4 py-3 text-gray-600">
+                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
                       {r.bookId?.category?.name || '-'}
                     </td>
-                    <td className="px-4 py-3 text-gray-700">{r.name}</td>
-                    <td className="px-4 py-3 text-gray-700">{r.email}</td>
-                    <td className="px-4 py-3 text-gray-700">{r.phone || '-'}</td>
-                    <td className="px-4 py-3 text-gray-700">{r.date}</td>
-                    <td className="px-4 py-3 text-gray-700">{r.time}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-200">{r.name}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-200">{r.email}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-200">{r.phone || '-'}</td>
+                    <td className="px-4 py-3">
+                      {r.confirmationCode ? (
+                        <span className="font-mono text-sm font-bold text-emerald-600 dark:text-emerald-400 tracking-wider">{r.confirmationCode}</span>
+                      ) : (
+                        <span className="text-gray-400 dark:text-gray-500">-</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-200">{r.date}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-200">{r.time}</td>
                     <td className={`px-4 py-3 ${getReturnDateBadgeClass(r.returnDate)}`}>
                       {r.returnDate || '-'}
+                      {isOverdue && (
+                        <span className="block text-xs text-red-600 font-semibold mt-0.5">
+                          {daysOverdue} {t('reports.days')} {t('admin.overdue').toLowerCase()}
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`flex items-center gap-1 w-fit px-2 py-1 rounded-full text-xs font-medium ${statusColors[r.status]}`}>
-                        <StatusIcon className="w-3.5 h-3.5" />
-                        {t(`admin.${r.status}`)}
-                      </span>
+                      <div className="flex flex-col gap-1">
+                        <span className={`flex items-center gap-1 w-fit px-2 py-1 rounded-full text-xs font-medium ${statusColors[r.status]}`}>
+                          <StatusIcon className="w-3.5 h-3.5" />
+                          {t(`admin.${r.status}`)}
+                        </span>
+                        {isOverdue && (
+                          <span className="flex items-center gap-1 w-fit px-2 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700">
+                            {t('admin.overdue')}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex gap-2 flex-wrap">
@@ -356,10 +380,10 @@ export default function ManageReservations() {
       {/* Collect Modal — Set Return Date */}
       {collectModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 cursor-pointer" onClick={() => setCollectModal(null)}>
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 cursor-default" role="dialog" aria-modal="true" aria-labelledby="collect-modal-title" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 cursor-default" role="dialog" aria-modal="true" aria-labelledby="collect-modal-title" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 id="collect-modal-title" className="text-lg font-semibold text-gray-800">{t('admin.setReturnDate')}</h3>
-              <button onClick={() => setCollectModal(null)} className="text-gray-400 hover:text-gray-600 cursor-pointer" aria-label={t('books.close')}>
+              <h3 id="collect-modal-title" className="text-lg font-semibold text-gray-800 dark:text-gray-100">{t('admin.setReturnDate')}</h3>
+              <button onClick={() => setCollectModal(null)} className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-pointer" aria-label={t('books.close')}>
                 <HiOutlineXMark className="w-5 h-5" />
               </button>
             </div>
@@ -371,7 +395,7 @@ export default function ManageReservations() {
                 className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                   collectMode === 'week'
                     ? 'bg-emerald-600 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 {t('admin.weekSystem')}
@@ -381,7 +405,7 @@ export default function ManageReservations() {
                 className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                   collectMode === 'specific'
                     ? 'bg-emerald-600 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 {t('admin.specificDate')}
@@ -390,7 +414,7 @@ export default function ManageReservations() {
 
             {collectMode === 'week' ? (
               <div>
-                <p className="text-sm text-gray-600 mb-2">{t('admin.returnDay')}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{t('admin.returnDay')}</p>
                 <div className="flex flex-wrap gap-2 mb-3">
                   {ALL_DAYS.map((day) => (
                     <button
@@ -399,15 +423,15 @@ export default function ManageReservations() {
                       className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                         collectWeekday === day
                           ? 'bg-emerald-600 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                       }`}
                     >
                       {dayNames[day]}
                     </button>
                   ))}
                 </div>
-                <p className="text-sm text-gray-500">
-                  {t('admin.returnDate')}: <span className="font-medium text-gray-800">{getCollectReturnDate()}</span>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {t('admin.returnDate')}: <span className="font-medium text-gray-800 dark:text-gray-100">{getCollectReturnDate()}</span>
                 </p>
               </div>
             ) : (
@@ -417,7 +441,7 @@ export default function ManageReservations() {
                   min={tomorrowStr}
                   value={collectSpecificDate}
                   onChange={(e) => setCollectSpecificDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
             )}
@@ -432,7 +456,7 @@ export default function ManageReservations() {
               </button>
               <button
                 onClick={() => setCollectModal(null)}
-                className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
+                className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
               >
                 {t('admin.cancel')}
               </button>
@@ -444,16 +468,16 @@ export default function ManageReservations() {
       {/* Extend Modal */}
       {extendModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 cursor-pointer" onClick={() => setExtendModal(null)}>
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 cursor-default" role="dialog" aria-modal="true" aria-labelledby="extend-modal-title" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 cursor-default" role="dialog" aria-modal="true" aria-labelledby="extend-modal-title" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 id="extend-modal-title" className="text-lg font-semibold text-gray-800">{t('admin.extendReturn')}</h3>
-              <button onClick={() => setExtendModal(null)} className="text-gray-400 hover:text-gray-600 cursor-pointer" aria-label={t('books.close')}>
+              <h3 id="extend-modal-title" className="text-lg font-semibold text-gray-800 dark:text-gray-100">{t('admin.extendReturn')}</h3>
+              <button onClick={() => setExtendModal(null)} className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-pointer" aria-label={t('books.close')}>
                 <HiOutlineXMark className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-sm text-gray-500 mb-4">
-              {t('admin.returnDate')}: <span className="font-medium text-gray-800">{extendModal.returnDate}</span>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              {t('admin.returnDate')}: <span className="font-medium text-gray-800 dark:text-gray-100">{extendModal.returnDate}</span>
             </p>
 
             {/* Mode Tabs */}
@@ -463,7 +487,7 @@ export default function ManageReservations() {
                 className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                   extendMode === 'week'
                     ? 'bg-emerald-600 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 {t('admin.weekSystem')}
@@ -473,7 +497,7 @@ export default function ManageReservations() {
                 className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                   extendMode === 'specific'
                     ? 'bg-emerald-600 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 {t('admin.specificDate')}
@@ -482,7 +506,7 @@ export default function ManageReservations() {
 
             {extendMode === 'week' ? (
               <div>
-                <p className="text-sm text-gray-600 mb-2">{t('admin.returnDay')}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{t('admin.returnDay')}</p>
                 <div className="flex flex-wrap gap-2 mb-3">
                   {ALL_DAYS.map((day) => (
                     <button
@@ -491,15 +515,15 @@ export default function ManageReservations() {
                       className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                         extendWeekday === day
                           ? 'bg-emerald-600 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                       }`}
                     >
                       {dayNames[day]}
                     </button>
                   ))}
                 </div>
-                <p className="text-sm text-gray-500">
-                  {t('admin.returnDate')}: <span className="font-medium text-gray-800">{getExtendReturnDate()}</span>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {t('admin.returnDate')}: <span className="font-medium text-gray-800 dark:text-gray-100">{getExtendReturnDate()}</span>
                 </p>
               </div>
             ) : (
@@ -509,7 +533,7 @@ export default function ManageReservations() {
                   min={tomorrowStr}
                   value={extendSpecificDate}
                   onChange={(e) => setExtendSpecificDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
             )}
@@ -524,7 +548,7 @@ export default function ManageReservations() {
               </button>
               <button
                 onClick={() => setExtendModal(null)}
-                className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
+                className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
               >
                 {t('admin.cancel')}
               </button>

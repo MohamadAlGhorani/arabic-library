@@ -96,7 +96,7 @@ export default function LanguageSwitcher() {
 
       {open && (
         <div
-          className="absolute top-full mt-1 end-0 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[140px] z-50"
+          className="absolute top-full mt-1 end-0 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 min-w-[140px] z-50"
           role="listbox"
           aria-label={t('nav.language')}
         >
@@ -110,8 +110,8 @@ export default function LanguageSwitcher() {
               aria-selected={i18n.language === lang.code}
               className={`w-full text-start px-4 py-2 text-sm transition-colors ${
                 i18n.language === lang.code
-                  ? 'bg-emerald-50 text-emerald-700 font-semibold'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-semibold'
+                  : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               {lang.label}

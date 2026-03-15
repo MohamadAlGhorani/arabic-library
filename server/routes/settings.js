@@ -2,6 +2,7 @@ const express = require('express');
 const Settings = require('../models/Settings');
 const auth = require('../middleware/auth');
 const { resolveLocation } = require('../middleware/roles');
+const { logAction } = require('../services/auditLog');
 
 const router = express.Router();
 
@@ -62,6 +63,14 @@ router.put('/', auth, resolveLocation, async (req, res) => {
 
     await settings.save();
     res.json(settings);
+
+    logAction(req, {
+      action: 'update',
+      entityType: 'settings',
+      entityId: settings._id,
+      details: 'Updated location settings',
+      location: locationId,
+    }).catch(console.error);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
